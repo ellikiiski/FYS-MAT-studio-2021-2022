@@ -1,6 +1,1 @@
-*.log\r
-*.toc\r
-*.dvi\r
-*.aux\r
-*.eps\r
-*.asv
+*.log\r*.toc\r*.dvi\r*.aux\r*.eps\r*.asv
