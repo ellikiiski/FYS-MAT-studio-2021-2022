@@ -2,7 +2,6 @@
 
 Aalto-yliopiston fysiikan ja matematiikan menetelmien -studio kurssin töitä keväältä 2021.
 
-### Tehtävät
 #### MATLAB
 - Johdatus matemaattiseen mallintamiseen
 - Ohjelmointi
