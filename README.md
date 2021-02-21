@@ -4,7 +4,7 @@ Aalto-yliopiston fysiikan ja matematiikan menetelmien -studio kurssin töitä ke
 
 #### MATLAB
 - [Johdatus matemaattiseen mallintamiseen](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/1%20Johdatus/studio-vk1.pdf)
-- Ohjelmointi
+- [Ohjelmointi](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/2%20Ohjelmointi/studio-vk2.pdf)
 - Regressiomallit
 - Differentiaaliyhtälöt
 - Monte Carlo -simulointi
