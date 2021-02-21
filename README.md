@@ -3,7 +3,7 @@
 Aalto-yliopiston fysiikan ja matematiikan menetelmien -studio kurssin töitä keväältä 2021.
 
 #### MATLAB
-- Johdatus matemaattiseen mallintamiseen
+- (Johdatus matemaattiseen mallintamiseen)[https://github.com/ellikiiski/FYS-MAT-studio/blob/main/1%20Johdatus/studio-vk1.pdf]
 - Ohjelmointi
 - Regressiomallit
 - Differentiaaliyhtälöt
