@@ -1,0 +1,337 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+                                
+\usepackage{color}
+\definecolor{green2}{rgb}{0,0.4,0}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=MATLAB,
+  aboveskip=3mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  commentstyle=\color{green2},
+  breaklines=false,
+  breakatwhitespace=false,
+  tabsize=3
+}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Tietokoneharjoitus 3: 
+\par
+Regressiomallit}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Tehtävä A: Lineaarinen energiankulutusmall}
+
+Halutaan muodostaa taulukon \ref{table:t} datasta lineaarinen regressiomalli kotialouden energiankulutuksen riippuvuudesta sen varallisuudesta.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    varallisuus & energiankulutus \\
+    \hline
+    20.0 & 1.8 \\
+    30.5 & 3.0 \\
+    40.0 & 4.8 \\
+    55.1 & 5.0 \\
+    60.3 & 6.5 \\
+    74.9 & 7.0 \\
+    88.4 & 9.0 \\
+    95.2 & 9.1 \\
+    \hline
+    \end{tabular}
+    \caption{Dataa kotitalouksien varallisuudesta ja energiankulutuksesta}
+    \label{table:t}
+\end{table}
+
+\subsection{Lineaarinen malli}
+
+Muodostetaan ensin lineaarinen malli ja plotataan se samaan kuvaan (kuva \ref{fig:k1}) alkuperäisten datapisteiden kanssa. Se hoituu seuraavalla koodilla.
+
+\begin{lstlisting}
+varallisuus = [20.0, 30.5, 40.0, 55.1, 60.3, 74.9, 88.4, 95.2]';
+energia = [1.8, 3.0, 4.8, 5.0, 6.5, 7.0, 9.0, 9.1]';
+% luodaan lineaarinen malli
+model = fitlm(varallisuus, energia, 'linear');
+% plotataan datapisteet
+figure
+plot(varallisuus, energia, 'x', 'color', 'red');
+% plotataan mallin antama lineaarinen ennuste
+...
+t = [10:120]';
+plot(t, predict(model, t), 'color', 'blue');
+...
+\end{lstlisting}
+
+\subsection{Luottamusväli}
+
+Lasketaan seuraavaksi ennusteelle $64\%$ luottamusvälit ja plotataan ne samaan kuvaan (kuva \ref{fig:k1}) seuraavalla koodilla.
+
+\begin{lstlisting}
+% tallennetaan 64% luottamusvalin yla- ja alarajat matriisiin eci
+[epred, eci] = predict(model, t, 'alpha', 0.36 ,
+    'Prediction', 'observation');
+% plotataan luottamusvalin yla- ja alarajat
+plot(t, eci(:,1), '--', 'color', 'cyan');
+plot(t, eci(:,2), '--', 'color', 'cyan');
+\end{lstlisting}
+
+Esimerkiksi varallisuustason 65 energiankulutus osuu $64\%$ luottamusvvälin perusteella välille $[5.91, 6.97]$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width= 130mm]{kuva1-linear.eps}
+    \caption{Lineaarinen regressiomalli kotilaouksien varallisuuden vaikutuksesta energiankulutukseen}
+    \label{fig:k1}
+\end{figure}
+
+\section{Tehtävä B: Epälineaarinen kasvumalli}
+
+Tiedetään, että jyvien painon $w$ keshitystä ajan $t$ suhteen voidaan mallintaa yhtälöllä
+\begin{equation}
+    w = f(t, w_{max}, t_{max}, t_v) = w_{max}(1+\frac{t_{max}-t}{t_{max}-t_v})(\frac{t}{t_{max}})^{\frac{t_{max}}{t_{max}-t_v}}
+\end{equation}
+kun jyvä ei ole vielä saavuttanut maksimipainoaan, eli kun $0 \leq t \leq t_{max}$. Kun maksimipaino on saavutettu eli kun $t \geq t_{max}$, paino pysyy vakiona eli $f(t, w_{max}, t_{max}, t_v) = w_{max}$.
+
+Mallin parametrit tarkoittavat seuraavaa:
+
+\begin{itemize}
+    \item $w_{max}$ on jyvän saavuttama maksimipaino
+    \item $t_{max}$ on ajanhetki, jona maksimipaino saavutetaan
+    \item $t_v$ on ajanhetki, jona jyvän kasvunopeus on suurimmillaan
+\end{itemize}
+
+\subsection{Malli ruisjyvien painolle}
+
+Halutaan selvittää millä parametrien $w_{max}$, $t_{max}$ ja $t_v$ arvoilla malli sopii taulukon \ref{table:t2} mittausdataan mahdollisimman hyvin.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    jyvän paino ($0.1$g) & päiviä 1. kukinnosta \\
+    \hline
+        2 & 2 \\
+        8 & 10 \\
+        19 & 18 \\
+        32 & 26 \\
+        43 & 31 \\
+        45 & 35 \\
+    \hline
+    \end{tabular}
+    \caption{Jyvän painon mittaustuloksia}
+    \label{table:t2}
+\end{table}
+
+Käytetään tehtävän ratkaisuun PNS-menetelmää. Muodostetaan ensin funktio, joka ottaa parametreikseen vektorin $\beta = (w_{max}, t_{max}, t_v)$ sekä vektorin ajanhetkiä, joiden ajalle malli sovitetaan. Funktio palauttaa vektorin $w$, joka sisältää mallilla lasketut jyvän painot kullakin vektorin $t$ ajanhetkellä.
+
+\begin{lstlisting}
+function w = kasvumalli(beta, t)
+% tallennetaan parametrien arvot kuvaaviin muuttujiin
+wmax = beta(1); tmax = beta(2); tv = beta(3);
+% lasketaan jyvien painot vektorin t ajanhetkilla
+w = wmax.*(1+(tmax-t)/(tmax-tv)).*(t./tmax).^(tmax/(tmax-tv));
+% huolehditaan, ettei jyvan paino lahde laskuun
+indmax = find(w==max(w));
+w(indmax:end)=max(w);
+\end{lstlisting}
+
+Etsitään seuraavaksi PNS-menetelmällä vektori $\beta$ eli parametrit $w_{max}$, $t_{max}$ ja $t_v)$, joilla malli sopii taulukon \ref{table:t2} mittausdataan parhaiten. Käytetetään alkuarvausta $\beta = (40, 40, 20)$.
+
+\begin{lstlisting}
+% alustetaan mittausdata
+days = [2, 10, 18, 26, 31, 35];
+weight = [2, 8, 19, 32, 43, 45];
+% estimoidaan parhaat parametrien arvot
+t = [0:50];
+est = lsqcurvefit(@(b,t) kasvumalli(b,t), [40,40,20], days, weight);
+\end{lstlisting}
+
+Kuvassa \ref{fig:k2} näkyvät sekä alkuperäiset datapisteet että mallin tuottama ennustekäyrä. Huomataan, että mallin mukaan jyvän paino kasvaa aluksi maltillisesti kunnes vauhti kiihtyy ja lopuksi hyytyy taas. Kun maksimipaino on saavutettu, ei paino luonnollisestikaan lähde siitä enää laskemaan. Itse asiassa käyrä muistuttaa hieman Poisson-jakaumaa.
+
+Voidaan tietenkin vielä määrittää ennustettu maksipaino ja päivä, jolloin se saavutetaan. Kuvaajan mukaan maksimipaino $5.15$g saavutetaan $45.$ päivänä ensimmäisen kukinnon jälkeen. Siispä esimerkiksi $35.$ päivänä tiedetään, että sato kannattaa korjata kymmenen päivän kuluttua.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva2-jyvajemmari.eps}
+    \caption{Jyvän painon kehitys ajan suhteen mallinnettuna PNS-menetelmällä mittausdatan pohjalta.}
+    \label{fig:k2}
+\end{figure}
+
+\section{Kotitehtävä: Planckin vakion estimointi}
+
+Tavoitteena on selvittää kokeellisen mittausdatan perusteella arvio Planckin vakiolle. Hyödynnetään tehtävässä yhtälöä
+\begin{equation}
+    V_0 = - \frac{h}{e}f+C,
+\end{equation}
+jossa $V_0$ on pysäytysjännite, $f$ valon tajuus, $h$ Planckin vakio $e$ elektronin varaus ja $C$ vakiotermi. Tämän avulla voidaan taulukon \ref{table:t3} mittaustulosten avulla selvittää niihin sovitetun suoran kulmakerroin, joka vastaa termiä $-\frac{h}{e}$, josta Planckin vakio $h$ voidaan helposti laskea.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{|c|c|}
+    \hline
+    taajuus $f$ ($10^{12}$ Hz) & pysäytysjännite $V_0$ ($V$) \\
+    \hline
+$519$ & $1.0 \pm 0.15$ \\
+$549$ & $1.2 \pm 0.40$ \\
+$688$ & $1.9 \pm 0.20$ \\
+$740$ & $2.4 \pm 0.30$ \\
+$821$ & $2.3 \pm 0.10$ \\
+    \hline
+    \end{tabular}
+    \caption{Valon taajuuden mittausdataon virheetöntä, mutta pysäytysjännitteelle on arvioitu virherajat.}
+    \label{table:t3}
+\end{table}
+
+Mittausdatan tarkkuuden vaihtelun vuoksi ei ole järkevää käyttää tavallista \texttt{fitlm}-mallia, joten käytetään hyödyksi menetelmää, jossa minimoidaan painotettua neliösummaa
+\begin{equation}
+    \sum_{i=1}^n(\frac{y_i-(b_1x_i+b_0)}{\Delta y_i})^2,
+\end{equation}
+missä $\Delta y_i$ on havainnon $i$ virhetermi.
+
+Analyyttisesti voidaan ratkaista neliösumman minimoivat parametrien arvot:
+\begin{equation}
+    b_1 = \frac{1}{D} ((\sum_{i=1}^n\frac{1}{(\Delta y_i)^2}) (\sum_{i=1}^n\frac{x_iy_i}{(\Delta y_i)^2}) - (\sum_{i=1}^n\frac{x_i}{(\Delta y_i)^2}) (\sum_{i=1}^n\frac{y_i}{(\Delta y_i)^2}))
+\end{equation}
+ja
+\begin{equation}
+    b_0 = \frac{1}{D} ((\sum_{i=1}^n\frac{x_i^2}{(\Delta y_i)^2}) (\sum_{i=1}^n\frac{y_i}{(\Delta y_i)^2}) - (\sum_{i=1}^n\frac{x_i}{(\Delta y_i)^2}) (\sum_{i=1}^n\frac{x_iy_i}{(\Delta y_i)^2}))
+\end{equation}
+missä
+\begin{equation}
+    D = (\sum_{i=1}^n\frac{1}{(\Delta y_i)^2}) (\sum_{i=1}^n\frac{x_i^2}{(\Delta y_i)^2}) - (\sum_{i=1}^n\frac{x_i}{(\Delta y_i)^2})^2.
+\end{equation}
+
+Parametrien arvioille voidaan laskea myös virheet
+\begin{equation}
+    \Delta b_1 = \sqrt{\frac{1}{D} \sum_{i=1}^n\frac{1}{(\Delta y_i)^2}}
+\end{equation}
+ja
+\begin{equation}
+    \Delta b_1 = \sqrt{\frac{1}{D} \sum_{i=1}^n\frac{x_i^2}{(\Delta y_i)^2}},
+\end{equation}
+joiden avulla arvioille saadaan $64\%$ luottamusväli $[b_i - \Delta b_1, b_i + \Delta b_i]$.
+
+\subsection{Painotetun neliösumman minimointi}
+
+Luodaan ensin MATLABilla funktio, joka ottaa parametreikseen taajuus-,\\ jännite- ja virherajavektorit. Funktio palauttaa ensimmäisenä arvonaan vektorin $b = (b_0, b_1)$, joka sisältää arviot termeille $b_0$ ja $b_1$, jotka ovat siis sovitettavan suoran $V = b_0 + b_1f$ vakiotermi ja kulmakerroin. Toisena arvona palautetaan matriisina ala- ja ylärajat termien $b_0$ ja $b_1$ virheille.\footnote{Aiemmassa versiossa, jossa funktio tuotti vääriä tuloksia oli tapahtunut klassinen morttivirhe: funktion parametreina nykyisten \texttt{xdata} ja \texttt{ydata} tilalla oli \texttt{x} ja \texttt{y}, jolloin niiden arvoja muutettiin myöhemmillä riveillä, vaikka tarkoitus oli luoda uudet muuttujat.}
+
+\begin{lstlisting}
+function [b, bci] = sovittaja(xdata, ydata, dy)
+% LASKETAAN YKSITTAISET SUMMALAUSEKKEET
+% 1 / dy^2
+e = sum(1./(dy.^2));
+% x / dy^2
+x = sum(xdata./(dy.^2));
+% y / dy^2
+y = sum(ydata./(dy.^2));
+% x * y / dy^2
+xy = sum((xdata.*ydata)./(dy.^2));
+% x^2 / dy^2
+x2 = sum((xdata.^2)./(dy.^2));
+% kerroin 1/D
+d = 1./((e*x2)-(x^2));
+% LASKETAAN TERMIT b1 JA b0
+b1 = d*((e*xy)-(x*y));
+b0 = d*((x2*y)-(x*xy));
+% LASKETAAN VIRHEET TERMEILLE b1 JA b0
+eb1 = sqrt(d*e);
+eb0 = sqrt(d*x2);
+% TALLENNETAAN ARVOT PALAUTETTAVIIN MUUTTUJIIN
+b = [b0 b1];
+bci = [(b0 - eb0) (b1 - eb1); (b0 + eb0) (b1 + eb1)];
+\end{lstlisting}
+
+Arvioidaan parametrit $b_0$ ja $b_1$ käyttäen yllä määriteltyä funktiota \texttt{sovittaja} ja muodostetaan saatujen arvojen avulla lineaarinen regressiosuora. Plotataan samaan kuvaajaan (kuva \ref{fig:k3}) sekä mittausdata virherajoineen että kyseinen suora taajuusvälillä $[400, 900]$.
+
+\begin{lstlisting}
+% alustetaan mittausdata vaektoreihin
+f = [519, 549, 688, 740, 821];
+v = [1.0, 1.2, 1.9, 2.4, 2.3];
+e = [0.15, 0.40, 0.20, 0.30, 0.10];
+% estimoidaan b0 ja b0 sovittaja-funktiolla
+[b, bci] = sovittaja(f, v, e);
+b0 = b(1);
+b1 = b(2);
+% maaritetaan regressiosuora valilla [400, 900]
+x = [400:900]';
+y = b0 + b1 .* x;
+% sovitetaan mittausdataan myos tavallinen lineaarinen malli
+model = fitlm(f, v, 'linear');
+% plotataan kaikki samaan kuvaan
+...
+errorbar(f, v, e, 'x');
+plot(x, y);
+plot(x, predict(model, x));
+...
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva3-planck.eps}
+    \caption{Mittaustulokset virheväleineen sekä niihin sovitetut painotettu ja tavallinen lineaarinen regressiosuora.}
+    \label{fig:k3}
+\end{figure}
+
+\subsection{Luottamusväli}
+
+Mallin luottamusvälien päätepisteet saadaan niin ikään \texttt{sovittaja}-funktion palautusarvona, ja voidaan laskea seuraavasti
+
+\begin{lstlisting}
+% parametrien b0 ja b1 luottamusvalit
+eb0 = [bci(1,1) bci(2,1)]
+eb1 = [bci(1,2) bci(2,2)]
+\end{lstlisting}
+
+Luottamusväleiksi saadaan \texttt{eb0 = [-1.5796, -0.7421]} ja \texttt{eb1 = [0.0037, 0.0048]}, mikä tarkoittaa erityisesti sitä, että välille $[0.0037, 0.0048]$ pitäisi kuulua se kulmakertoimen arvo, joka on kirjallisuudesta löytyvän Planckin vakion mukainen.
+
+\subsection{Planckin vakion laskeminen}
+
+Lasketaan vielä saatujen tulosten pohjalta arvio Planckin vakiolle. Kuten aiemmin todettu, sovitetun regressiosuoran kulmakerroin kuvaa termiä $-\frac{h}{e}$, jossa $e=-1.6\cdot10^{-19}\,C$ on elektronin varaus ja $h$ selvitettävänä oleva Planckin vakio. Toisaalta suoran kulmakertoimen $b_1$ on myös mitattu kuuluvan todennäköisesti välille $[0.0037\cdot10^{-12}\,Vs, 0.0048\cdot10^{-12}\,Vs]=[b_{1_{min}}, b_{1_{max}}]$. Voidaan ratkaista yhtälöt
+\begin{align}
+    h_{min} & = -e\cdot b_{1_{min}} \\
+    & = -(-1.6\cdot 10^{-19}\,C)\cdot0.0037\cdot10^{-12}\,Vs \\
+    & = 5.92\cdot 10^{-34}Js.
+\end{align}
+ja
+\begin{align}
+    h_{max} & = -e\cdot b_{1_{max}} \\
+    & = -(-1.6\cdot 10^{-19}\,C)\cdot0.0048\cdot10^{-12}\,Vs \\
+    & = 7.68\cdot 10^{-34}Js.
+\end{align}
+Huomamantaan, että oikealle Planckin vakiolle pätee $h=6.63\cdot 10^{-34} \in [h_{min}, h_{max}]$. Näin ollen voidaan uskoa mallinnuksen ja laskelmien onnistuneen.
+
+\end{document}
