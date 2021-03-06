@@ -1,0 +1,189 @@
+%% AMS-LaTeX Created with the Wolfram Language for Students - Personal Use Only : www.wolfram.com
+
+\documentclass{article}
+\usepackage{amsmath, amssymb, graphics, setspace}
+
+\newcommand{\mathsym}[1]{{}}
+\newcommand{\unicode}[1]{{}}
+
+\newcounter{mathematicapage}
+\begin{document}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{Series}[\text{Sin}[x],\{x,0,3\}]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(x-\frac{x^3}{6}+O[x]^4\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{Normal}[\text{Series}[\text{Sin}[x],\{x,0,3\}]]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(x-\frac{x^3}{6}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{N[\text{Pi},20]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(3.1415926535897932385\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{f[\text{x$\_$}] = x{}^{\wedge}2+3*x-5;}\\
+\pmb{\text{Solve}[f[x]==0,x]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{x\to \frac{1}{2} \left(-3-\sqrt{29}\right)\right\},\left\{x\to \frac{1}{2} \left(-3+\sqrt{29}\right)\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{Normal}[\text{Series}[\text{Sin}[x], \{x,0,5\}]];}\\
+\pmb{\text{Plot}[\{\text{Sin}[x],\%\},\{x,-2*\text{Pi},2*\text{Pi}\}, \text{PlotLegends}\to \{\text{{``}sin(x){''}},\text{{``}Taylor{''}}\}, \text{GridLines}\to
+\text{Automatic}]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\begin{array}{cc}
+  &  \\
+\end{array}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{{``}Global$\grave{ }$*{''}}]}\\
+\pmb{\text{Ctot}[\text{q$\_$}] = a*(d/q)+b*(q/2)}\\
+\pmb{\text{der} = D[\text{Ctot}[q],q]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\frac{a d}{q}+\frac{b q}{2}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\frac{b}{2}-\frac{a d}{q^2}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{Solve}[\text{der} == 0, q]}\\
+\pmb{\text{qq} = \%[[2,1,2]]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{q\to -\frac{\sqrt{2} \sqrt{a} \sqrt{d}}{\sqrt{b}}\right\},\left\{q\to \frac{\sqrt{2} \sqrt{a} \sqrt{d}}{\sqrt{b}}\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\frac{\sqrt{2} \sqrt{a} \sqrt{d}}{\sqrt{b}}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{a*(d/\text{qq})+b*(\text{qq}/2)}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\sqrt{2} \sqrt{a} \sqrt{b} \sqrt{d}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{{``}Global$\grave{ }$*{''}}]}\\
+\pmb{f[\text{x$\_$},\text{y$\_$}] = 100*(y-x{}^{\wedge}2){}^{\wedge}2+(a-x){}^{\wedge}2;}\\
+\pmb{\text{grad} = D[f[x,y],\{\{x,y\}\}];}\\
+\pmb{\min  = \text{Solve}[\text{grad}==\{0,0\},\{x,y\}]}\\
+\pmb{f[x,y] \text{/.} \{x\to \min [[1,1,2]],y\to \min [[1,2,2]]\}}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{x\to a,y\to a^2\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(0\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{a = 1;}\\
+\pmb{\text{pic} = \text{Plot3D}[f[x,y], \{x,0,2\},\{y,0,2\}]}\)
+\end{doublespace}
+
+\includegraphics{studio-vk5_gr1.eps}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{{``}Global$\grave{ }$*{''}}]}\\
+\pmb{f[\text{a$\_$},\text{b$\_$}]=(a*b)/(a+b);}\\
+\pmb{\text{grad} = D[f[a,b],\{\{a,b\}\}];}\\
+\pmb{\text{agrad} = \text{Abs}[\text{grad}];}\\
+\pmb{\text{errorAB} = \{\text{da}, \text{db}\};}\\
+\pmb{\text{errorF} = \text{Simplify}[\text{agrad}.\text{errorAB}]}\\
+\pmb{a = 85;}\\
+\pmb{\text{da} = 1;}\\
+\pmb{b = 196;}\\
+\pmb{\text{db} = 2;}\\
+\pmb{F = f[a,b]}\\
+\pmb{N[\%]}\\
+\pmb{\{F-\text{errorF},F+\text{errorF}\}}\\
+\pmb{N[\%]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\text{db} \text{Abs}\left[\frac{a^2}{(a+b)^2}\right]+\text{da} \text{Abs}\left[\frac{b^2}{(a+b)^2}\right]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\frac{16660}{281}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(59.2883\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\frac{4628594}{78961},\frac{4734326}{78961}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\{58.6187,59.9578\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\pmb{\text{ClearAll}[\text{{``}Global$\grave{ }$*{''}}]}\\
+\pmb{A[\text{r$\_$},\text{p$\_$}] = (1/2)*p*r{}^{\wedge}2;}\\
+\pmb{\text{grad} = D[A[r,p], \{\{r,p\}\}];}\\
+\pmb{\text{agrad} = \text{Abs}[\text{grad}];}\\
+\pmb{\text{errorRP} = \{\text{dr},\text{dp}\};}\\
+\pmb{\text{errorA}=\text{Simplify}[\text{agrad}.\text{errorRP}]}\\
+\pmb{\text{deltaR}=\text{Solve}[\text{errorA}==\text{dA},\text{dr}]}\\
+\pmb{\text{deltaR} \text{/.} \{\text{dA}\to (1/2), \text{dp}\to (1/100)*(2*\text{Pi}/360)\};}\\
+\pmb{\text{Expand}[\%];}\\
+\pmb{\text{Simplify}[\%]}\\
+\pmb{\text{deltaR} \text{/.} \{\text{dA}\to  (1/2), r\to  50, p\to  2*\text{Pi}/3,}\\
+\pmb{\text{dp}\to  (1/100)*(2*\text{Pi}/360)\};}\\
+\pmb{\text{Simplify}[\%]}\\
+\pmb{N[\%]}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\frac{1}{2} \text{dp} \text{Abs}[r]^2+\text{dr} \text{Abs}[p r]\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{\text{dr}\to \frac{2 \text{dA}-\text{dp} \text{Abs}[r]^2}{2 \text{Abs}[p r]}\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{\text{dr}\to \frac{18000-\pi  \text{Abs}[r]^2}{36000 \text{Abs}[p r]}\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\left\{\left\{\text{dr}\to -\frac{1}{480}+\frac{3}{200 \pi }\right\}\right\}\)
+\end{doublespace}
+
+\begin{doublespace}
+\noindent\(\{\{\text{dr}\to 0.00269131\}\}\)
+\end{doublespace}
+
+\end{document}
