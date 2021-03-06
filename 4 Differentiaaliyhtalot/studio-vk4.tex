@@ -1,0 +1,477 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+                                
+\usepackage{color}
+\definecolor{green2}{rgb}{0,0.4,0}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=MATLAB,
+  aboveskip=3mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  commentstyle=\color{green2},
+  breaklines=false,
+  breakatwhitespace=false,
+  tabsize=3
+}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Tietokoneharjoitus 4: 
+\par
+Differentiaaliyhtälöt}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\vfill
+}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Tehtävä A: Infektiomalli}
+
+Käsitellään jälleen jo kakkosviikolla tutuksi tullutta SIR-infektiomallia, jossa kolmen ihmisryhmän (alttiit (S), infektoituneet (I) ja toipuneet (R)) koot muuttuvat ajan suhteen seuraavien differentiaaliyhtälöiden mukaan:
+
+\begin{equation}
+\label{dyt}
+\begin{cases}
+\Delta s(t) = -\alpha i(t) s(t) \\
+\Delta i(t) = \alpha i(t) s(t) - \beta i(t) \\
+\Delta r(t) = \beta i(t)
+\end{cases}
+\end{equation}
+
+\subsection{SIR-mallin numeerinen ratkaisu}
+
+Tällä kertaa ei hyödynnetä viimeksi käytettyjä differenssiyhtälöitä, vaan ratkaistaan differentiaaliyhtälöt numeerisesti MATLABin \texttt{ode45}-DY-ratkaisimen avulla. Luodaan ensin oma funktio \texttt{infektio}, joka kuvaa yhtälöryhmää \ref{dyt}.
+
+\begin{lstlisting}
+function dsir = infektio(t, sir, alpha, beta)
+% tallennetaan eri funktioita kuvaavat rivit omiin muuttujiin
+s = sir(1);
+i = sir(2);
+r = sir(3);
+% muodostetaan differentiaaliyhtalot
+ds = -alpha*i*s;
+di = alpha*i*s-beta*i;
+dr = beta*i;
+% kootaan palautettava vektori
+dsir = [ds; di; dr];
+\end{lstlisting}
+
+Ratkaistaan tämän jälkeen differentiaaliyhtälöryhmä aikavälillä $[1, 100]$ ja piirretään kuvaaja (kuva \ref{fig:sir1}) saaduista yhtälöiden arvojen numeerisista ratkaisuista ajan suhteen.
+
+\begin{lstlisting}
+% alustetaan aikavali, parametrit ja alkuarvot
+t = [1:0.1:100];
+alpha = 0.0011;
+beta = 0.03;
+sir0 = [999; 1; 0];
+% maaritetaan asetuksilla maksimivirheet
+options=[];
+options=odeset(options,'RelTol',1e-7,'AbsTol',1e-7);
+% ratkaistaan differentiaaliyhtaloryhma
+[tout,SIRout]=ode45(@infektio,t,sir0,options,alpha,beta);
+% plotataan saadut kayrat
+figure
+plot(tout, SIRout);
+...
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva1-sirnumeerinen.eps}
+    \caption{Numeerisesti ratkaistu SIR-malli parametrien arvoilla $\alpha=0.0011$ ja $\beta=0.03$.}
+    \label{fig:sir1}
+\end{figure}
+
+Kuvasta \ref{fig:sir1} huomataan, että numeerisesti ratkaistu malli antaa melkein täsmälleen samanlaisen tuloksen kuin aiemmin differenssiyhtälöiden avulla tuotettu malli. Ainoastaan infektoituneiden määrää kuvaavan käyrän huippu on sileämpi numeerisessa ratkaisussa.
+
+\subsection{Differenssiyhtälö- ja numeerisen ratkaisun erot}
+
+Vertaillaan seuraavaksi SIR-mallin numeerista ratkaisua ja differenssiyhtälöiden tuottamaa ratkaisua parametreilla $\alpha=0.003$ ja $\beta=0.03$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva2-sirmolemmat.eps}
+    \caption{Ratkaisujen vertailua parametrien arvoilla $\alpha=0.003$ ja $\beta=0.03$.}
+    \label{fig:sir2}
+\end{figure}
+
+Kuvasta \ref{fig:sir2} huomataan oitis, että differenssiyhtälöratkaisussa on jokin pielessä. Numeerinen ratkaisu näyttäisi intuitiivisesti osuvan lähelle totuutta, joten ongelman selvittämiseksi on tarkasteltava lähemmin itse differenssiyhtälöitä, jotka ovat muodoltaan seuraavat:
+
+\begin{equation}
+\label{diffyt}
+    \begin{cases}
+    s(t+1)=s(t)+\Delta s(t) = s(t)\cdot(1-\alpha i(t)) \\
+    i(t+1)=i(t)+\Delta i(t) = i(t)\cdot(1+\alpha s(t) - \beta)\\
+    r(t+1)=r(t)+\Delta r(t) = r(t) + \beta i(t)
+    \end{cases}
+\end{equation}
+
+Huomataan, että parametrin $\alpha$ ollessa ''liian'' iso suhteessa ihmismäärään ja parametriin $\beta$, yhtälöryhmän \ref{diffyt} termi $(1+\alpha s(t) - \beta)$ ja sitä myötä arvo $i(t)$ kasvavat alussa räjähdysmäisesti jopa yli populaation suuruuden, jolloin puolestaan termin $(1-\alpha i(t))$ mukana arvo $s(t)$ laskee hurjaa vauhtia peräti miinuksen puolelle. Tämän jälkeen tilanne kääntyy päälaelleen ja heittelehdintää jatkuu kunnes se tasaantuu pikkuhiljaa.
+
+\section{Tehtävä B: Radioaktiivinen hajoaminen}
+
+Tarkastellaan isotoopin $y$ hajoamista systeemissä, johon tuodaan ajanhetkellä $t_z$ toista isotooppia $z$, joka puolestaan hajoaa isotoopiksi $y$ eli omalta osaltaan lisää sen määrää systeemissä. Isotoopin $y$ määrän muutosta systeemissä voidaan mallintaa differentiaaliyhtälöllä
+
+\begin{equation}
+    y'(t) = -\frac{y(t)}{T_0} + \frac{z(t)}{T_1},
+\end{equation}
+
+missä
+
+\begin{equation}
+    z(t) =
+    \begin{cases}
+    0 \hspace{18mm} t \in [0, t_z) \\
+    Z_0 e^{-\frac{t-t_z}{T_1}} \hspace{5mm} t \in [t_z, \infty)
+    \end{cases}
+\end{equation}
+
+sekä $T_0$ ja $T_1$ isotooppien hajoamisen aikavakioita ja $Z_0$ systeemiin tuotavan istotoopin $z$ määrä.
+
+\subsection{Parametrin $T_1$ vaikutus hajoamiseen}
+\label{bb}
+
+Lähdetään jälleen ratkaisemaan differentiaaliyhtälöä numeerisesti \\ MATLABilla. Aloitetaan luomalla yhtälöitä kuvaavat funktiot \texttt{z} ja \texttt{dy}.
+
+\begin{lstlisting}
+function zt = z(t, tz, T1, Z0)
+if (t<tz)
+    zt = 0;
+else
+    zt = Z0*exp(-(t-tz)/T1);
+end
+\end{lstlisting}
+
+\begin{lstlisting}
+function dyt = dy(t, y, T0, T1, Z0, tz)
+dyt = -y/T0 + (z(t, tz, T1, Z0))/T1;
+\end{lstlisting}
+
+Tutkitaan seuraavaksi hajoamista plottaamalla kuvaaja (kuva \ref{fig:hajo1}) muutamalla eri parametrin $T_1$ arvolla.
+
+\begin{lstlisting}
+% alustetaan parametrit ja alkuarvot
+Z0 = 1;
+y0 = 1;
+tz = 15;
+T0 = 10;
+T1 = linspace(1, 100, 10);
+% alustetaan differentiaaliyhtalon numeerista ratkaisua varten
+% aikavali ja virheasetukset
+t = linspace(0,50,150);
+options=[];
+options=odeset(options,'RelTol',1e-7,'AbsTol',1e-7);
+% ratkaistaan dy kymmenella eri T1 arvolla valilla [1,100]
+% (ja kerataan samalla T1 arvot taulukkoon legendia varten)
+y = [];
+leg = [];
+for i=1:length(T1)
+    [tout,yout]=ode45(@dy,t,y0,options,T0,T1(i),Z0,tz);
+    y(i,:) = yout;
+    leg{i} = ('T1 = ' + string(T1(i)));
+end
+% plotataan kymmenen eri ratkaisukayraa
+figure
+hold on
+for i=1:length(T1)
+    plot(t, y(i,:))
+end
+...
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=115mm]{kuva3-hajoT1skaala.eps}
+    \caption{Isotoopin $y$ hajoaminen systeemissä parametrin $T_1$ eri arvoilla.}
+    \label{fig:hajo1}
+\end{figure}
+
+Kuvan \ref{fig:hajo1} mukaan isotooppia $y$ näyttäisi olevan ajanhetkellä $50$ jäljellä eniten kun parametri $T_1$ on lähellä arvoa $23$.
+
+Tutkitaan tilannetta vielä tarkemmin välillä $T_1 \in [1, 50]$ ja lasketaan ajanhetkellä $50$ jäljellä olevan istoopin $y$ määrän maksimoiva arvo $T_1$.
+
+\begin{lstlisting}
+T1 = linspace(1, 50, 200);
+...
+% sama for-luuppi kuin aiemmin
+...
+maxT1 = T1(find(y(:,150)==max(y(:,150))))
+\end{lstlisting}
+
+Vastaukseksi kyseisellä jaolla saadaan \texttt{maxT1 = 22.9146}, joka osuukin varsin lähelle aiemmin arveltua arvoa $23$.
+
+\subsection{Ratkaisut ajan $t$ ja aikavakion $T_1$ funktiona}
+\label{taydennys1}
+
+Visualisoidaan vielä differentiaaliyhtlön ratkaisuja sekä ajan $t$ että parametrin $T_1$ funktiona. Kuvassa \ref{fig:surf} nähdään ns. surface plot, joka on saatu aikaan seuraavalla koodilla.
+\begin{lstlisting}
+% plotataan ratkaisuja parametrien t ja T1 funktiona
+figure
+surf(t, T1, y)
+colorbar
+...
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva4-hajosurfplot.eps}
+    \caption{Isotoopin $y$ määrä systeemissä ajan ja aikavakion $T_1$ funktiona.}
+    \label{fig:surf}
+\end{figure}
+
+Tarkastellaan samaa asetelmaa myös plottaamalla tasa-arvokäyriä jäljellä olevan isotoopin $y$ määrästä (kuva \ref{fig:contour}) seuraavalla koodilla.
+
+\begin{lstlisting}
+% plotataan tasa-arvokayrat
+figure
+[c,h] = contour(t, T1, y);
+clabel(c, h);
+...
+\end{lstlisting}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width = 120mm]{kuva5-hajotasarvk.eps}
+    \caption{Tasa-arvokäyriä systeemissä olevan isotoopin $y$ määrästä ajan ja aikavakion $T_1$ funktiona.}
+    \label{fig:contour}
+\end{figure}
+
+\section{Kotitehtävä: Ajettu värähtelijä}
+
+Tutkitaan harmonista värähtelijää, johon vaikuttaa voima $F\cos{\omega t}$ sekä vastusvoimia. Tilannetta kuvaa yhtälö
+
+\begin{equation}
+    y''(t)+\frac{y'(t)}{T_0}+{\omega_0}^2 y(t) = \frac{F}{M}\cos{\omega t},
+\end{equation}
+
+missä $T_0$ on vastusvoimien vaimennusvakio, $\omega_0$ värähtelijän resonanssitaajuus, $M$ värähtelijän massa, $F$ vaikuttavan voiman amplitudi ja $\omega$ voiman taajuus.
+
+\subsection{Toisen kertaluvun DY:n numeerinen ratkaisu}
+
+Ratkaistaan ajetun värähtelijän värähtelyitä ajan suhteen kuvaava toisen kertaluvun differentiaaliyhtälö numeerisesti MATLABilla. Ensin yhtälö on muutettava muotoon
+
+\begin{equation}
+    \begin{cases}
+    x_1(t) = y'(t) \\
+    x_2(t) = y(t),
+    \end{cases}
+\end{equation}
+ja edelleen
+\begin{align}
+\label{x1}
+    x_1'(t) = y''(t) & = \frac{F}{M}\cos{\omega t}-\frac{y'(t)}{T_0}-{\omega_0}^2 y(t) \\
+    & = \frac{F}{M}\cos{\omega t}-\frac{x_1(t)}{T_0}-{\omega_0}^2 x_2(t)
+\end{align}
+ja
+\begin{align}
+\label{x2}
+    x_2'(t)=y'(t)=x_1(t)
+\end{align}
+
+Nyt alkuperäinen toisen kertaluvun DY on ilmaistu kahtena ensimmäisen kertaluvun DY:na, jolloin se voidaan ratkaista kuten vastaavanlainen yhtälöryhmä tehtävässä A. Luodaan yhtälöparia (yhtälöt \ref{x1} ja \ref{x2}) kuvaava funktio.
+
+\begin{lstlisting}
+function dx = drosc(t,x,T0,omega,M,F,omega0)
+% otetaan talteen eri funktioita kuvaavat rivit
+x1 = x(1);
+x2 = x(2);
+% muodostetaan differentiaaliyhtalot
+dx1 = F/M*cos(omega*t)-x1/T0-omega0^2*x2;
+dx2 = x1;
+% kootaan palautettava vektori
+dx = [dx1; dx2];
+\end{lstlisting}
+
+Ratkaistaan sitten yhtälö arvoilla $T0=10$, $\omega_0=1$, $M=1$, $F=1$, $\omega=1$ ja $y(0)=y'(0)=0$.
+
+\begin{lstlisting}
+% alustetaan alkuarvot, parametrit ja aikavali
+x0 = [0,0];
+T0 = 10;
+omega = 1;
+M = 1;
+F = 1;
+omega0 = 1;
+t = linspace(1,T0*10,1000);
+% maaritetaan asetuksilla maksimivirheet
+options=[];
+options=odeset(options,'RelTol',1e-7,'AbsTol',1e-7);
+% ratkaistaan differentiaaliyhtaloryhma
+[tout,xout]=ode45(@drosc,t,x0,options,T0,omega,M,F,omega0);
+% plotataan haluttu kayra x2(t)=y(t)
+figure
+plot(tout, xout(:,2));
+...
+\end{lstlisting}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=120mm]{kuva6-av.eps}
+    \caption{Ajettu värähtelijä ajan funktiona.}
+    \label{fig:osc1}
+\end{figure}
+
+Tulokseksi saadaan kuva \ref{fig:osc1}, josta nähdään kuinka levosta lähtevään värähtelijään alkaa vaikuttaa voima, jolloin värähtelyn amplitudi kasvaa pikkuhiljaa, kunnes saavuttaa tasapainotilan.
+
+\subsection{Asymptoottinen ratkaisu}
+\label{asymp}
+
+Ratkaistaan sama yhtälö vielä kahdessa toisessa tilanteessa: kun $\omega < \omega_0$ ja $\omega > \omega_0$. Plotataan ratkaisut parametrin $\omega$ arvoilla $0.1$, $1.0$ ja $1.1$ allekkain vertailua varten ja lisätään kuvaajiin myös ajavan voiman $F\cos{\omega t}$ käyrä.
+
+\begin{lstlisting}
+% muutetaan muuttuja omega vektoriksi
+omega = [0.1,1.0,1.1];
+% plotataan kuvaajat allekain
+figure
+for i=1:length(omega)
+    % ratkaistaan differentiaaliyhtalo
+    [tout,xout]=ode45(@drosc,t,x0,options,T0,omega(i),M,F,omega0);
+    % maaritellaan voiman funktio kyseisella omegan arvolla
+    f = F*cos(omega(i)*t);
+    % plotataan ratkaisu kyseisella omegan arvolla
+    subplot(3,1,i)
+    hold on
+    plot(tout, xout(:,2))
+    plot(t, f) 
+    ...
+end
+\end{lstlisting}
+
+Kuvassa \ref{fig:ocs2} allekkain olevia käyriä vertaillessa huomataan ensimmäiseksi, että voiman taajuuden ($\omega$) ollessa merkittävästi pienempi kuin värähtelijän resonanssitaajuus ($\omega_0$), värähtelijä käyttäytyy eri tavalla kuin kahdessa muussa tapauksessa. Voiman alkaessa vaikuttaa värähtelijään se alkaa aluksi värähtelemään nopeammin ja suuremmalla amplitudilla, kunnes tasaantuu ajan mittaan värähtelemään yhtenevästi ajavan voiman kanssa.
+
+Tapauksessa $\omega = \omega_0$ voiman ja värähdysten vaihe-ero on kuvan mukaan likimain $\frac{\pi}{2}$, nimittäin voiman ollessa maksimissaan puolestaan värähtelijän nopeus on suurimmillaan. Värähtelijän tajuus ei muutu tilanteen kehittyessä, mutta amplitudi kasva tasaisesti kunnes saavuttaa lopullisen arvonsa.
+
+Kun $\omega > \omega_0$, vaihe-ero näyttää lähestyvän arvoa $\pi$, mikä tarkoittaa voiman ja värähtelijän olevan vastakkaissuuntaisia kullakin ajanhetkellä. Myöskään tässä tapauksessa värähtelijän tajuus pysyy samana alusta asti, mutta amplitudi kasvaa alkuun tasaisesti yli lopullisen tasapainon, kunnes laskee sitten ''steady state''- tilanteeseen.
+
+\subsection{Vaimennusvakion $T_0$ yhteys värähtelyn amplitudiin}
+
+Halutaan selvittää, miten vaimennusvakio $T_0$ vaikuttaa värähtelijän amplitudiin. Tarkastellaan tilannetta ensin plottamalla muutama kuvaaja vakion $T_0$ eri arvoilla. Sehän hoituu samaan tapaan kuin osiossa \ref{bb} kuvan \ref{fig:hajo1} luominen.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva7-avT0skaala.eps}
+    \caption{Värähtelijän käyriä muutamalla eri $T_0$ arvolla.}
+    \label{fig:osc3}
+\end{figure}
+
+Tutkittaessa kuvasta \ref{fig:osc3} vakion $T_0$ vaikutusta amplitudiin, huomataan tasaisesti jakautuneiden vakion $T_0$ arvojen tuottavan amplitudien arvoja tasaisin välein. Voisi siis hyvin olettaa amplitudin olevan lineaarisesti riippuvainen arvosta $T_0$.
+
+Kun otetaan kuvaajasta muutama piste tarkasteluun, voidaan tehdä amplitudin ($A$) ja vaimennusvakion ($T_0$) yhteydelle valistunut arvaus $A=T_0$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=120mm]{kuva8-avjavoima.eps}
+    \caption{Ajettu värähtelijä parametrin $\omega$ eri arvoilla.}
+    \label{fig:ocs2}
+\end{figure}
+
+\subsection{Regressiomalli}
+\label{taydennys2}
+
+Kuvitellaan vielä lopuksi, että mallin tuottamat ratkaisut ovatkin datapisteitä mitatusta havaintodatasta ja sovitetaan niihin regressiomalli
+\begin{equation*}
+    F(t;A,\hat{\omega},\varphi)=A\cos{\hat{\omega}+\varphi},
+\end{equation*}
+missä $A$, $\hat{\omega}$ ja $\varphi$ ovat sovitusparametreja.
+
+Toteteutetaan ensin funktio \texttt{kosinimalli}, jonka mukaan parametreja sitten sovitetaan.
+
+\begin{lstlisting}
+function sovite = kosinimalli(beta,t)
+% tallennetaan parametrien arvot kuvaaviin muuttujiin
+A = beta(1); omega = beta(2); phi = beta(3);
+% lasketaan arvot vektorin t ajanhetkilla
+sovite = A*cos(omega*t+phi);
+\end{lstlisting}
+
+Otetaan sitten riittävän kokoinen otos kullakin ajotaajuuden $\omega \in \{0.1,1,1.1\}$ arvolla saadun ratkaisun lopusta, koska halutaan mallintaa nimenomaan asymptoottista värähtelyä. Tutkitan hieman kuvaajia ja rajataan otokset silmämääräisesti siten, että kukin sisältää vähintään kolme värähtelyjaksoa.
+
+\begin{lstlisting}
+% RAJATAAN OTOKSET LOPPUPAASTA REGRESSIOMALLIA VARTEN
+% omega = 0.1
+omg1t = tout(1600:end);
+omg1y = y(1,1600:end)';
+% omega = 1.0
+omg2t = tout(4600:end);
+omg2y = y(2,4600:end)';
+% omega = 1.1
+omg3t = tout(4600:end);
+omg3y = y(3,4600:end)';
+\end{lstlisting}
+
+Estimoidaan seuraavaksi kussakin tapauksessa sovitusparametrit \texttt{lsqcurvefit}-komennolla. Alkuarviot sovitteelle saadaan suoraan ajotaajuuden $\omega$ arvosta sekä tarkastelemalla kuvasta \ref{fig:ocs2} loppupään värähdysten amplitudeja.
+
+\begin{lstlisting}
+% estimaatit sovitusparametreille kullakin omegan arvolla
+est1 = lsqcurvefit(@(b,t) kosinimalli(b,t), [1, 0.1, 0], omg1t, omg1y);
+est2 = lsqcurvefit(@(b,t) kosinimalli(b,t), [10, 1, 0], omg2t, omg2y);
+est3 = lsqcurvefit(@(b,t) kosinimalli(b,t), [5, 1.1, 0], omg3t, omg3y);
+\end{lstlisting}
+
+Plotataan lopuksi ''mittaudata'' (harvennettuna, koska datapisteet sijaitsevat muuten turhan lähekkäin) ja regressiomallista saatu käyrä samaan kuvaan kolmessa eri tarkastellussa tapauksessa. Alla esimerkkikoodi ensimmäisestä.
+
+\begin{lstlisting}
+% OMEGA = 0.1
+% harvennetaan "mittausdata"
+fakeDataT1 = omg1t(1:50:end);
+fakeDataY1 = omg1y(1:50:end);
+% plotataan "mittausdata" ja saatu malli samaan kuvaan
+...
+t=[min(fakeDataT1):0.1:max(fakeDataT1)];
+plot(t, kosinimalli(est1, t));
+plot(fakeDataT1, fakeDataY1, 'x');
+...
+\end{lstlisting}
+
+Tutkitaan lopuksi kussakin tapauksessa estimoituja sovitusparametrien arvoja ja kuvaa sekä verrataan niitä osion \ref{asymp} tuloksiin.
+
+Tapauksessa $\omega = 0.1$ PNS-estimaatit sovitusparametreille saadaan muuttujasta \texttt{est1 =} \texttt{[1.0100 0.1000 -0.0100]} eli ne ovat $A=1.01$, $\hat{\omega}=0.10$ ja $\varphi=-0.01$. Kuvasta \ref{fig:tap1} nähdään, että regressiomalli kuvaa ''mittaudataa'' varsin mainiosti. 
+
+Sovitusparametrien estimaatit arvolla $\omega=1.0$ (\texttt{est2}) ovat $A=10.00$, $\hat{\omega}=1.00$ ja $\varphi=-1.57$. Samoin tässä tapauksessa kuva \ref{fig:tap2} näyttää regressiokäyrän kulevan nätisti datapisteiden kautta.
+
+Viimeisessä tapauksessa $\omega=1.1$ estimaateiksi (\texttt{est3}) saadaan $A=-4.22$, $\hat{\omega}=1.10$ ja $\varphi=0.48$, jotka niin ikään kuvasta \ref{fig:tap3} päätellen tuottavat pätevän regressiokäyrän ''mittaustuloksille''.
+
+Kaikki kuvaajat vastaavat myös hyvin kuvan \ref{fig:ocs2} kuvaajien loppupäitä eli ajettujen värähtelijöiden asymptoottista värähtelyä. Täten voidaankin sanoa, että ajettua värähteliää voi mallintaa kosinifunktion avulla.
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva9-avregressiom.eps}
+    \caption{''Mittaustulokset'' ja niihin sovitettu regressiomalli eri parametrin $\omega$ arvolla (huom. erot kuvajian akselien skaalan välillä).}
+    \label{fig:tap1}
+\end{figure}
+
+\end{document}
