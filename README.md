@@ -11,8 +11,8 @@ Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin töitä ke
 - Optimointi I
 - Optimointi II
 #### Mathematica
-- Symbolinen laskenta I *(tulossa seuraavaksi)*
-- Symbolinen laskenta II
+- [Symbolinen laskenta I](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/5%20Symbolinen%20laskenta%20I/studio-vk5.pdf)
+- Symbolinen laskenta II *(tulossa seuraavaksi)*
 #### Simulink
 - Dynaamisten systeemien säätö
 #### Excel
