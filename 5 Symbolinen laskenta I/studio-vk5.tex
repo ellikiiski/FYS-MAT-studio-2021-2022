@@ -1,0 +1,195 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Tietokoneharjoitus 5: 
+\par
+Symbolinen laskenta I}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\vfill
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Tehtävä A: Mathematica-pelleilyä}
+
+\subsection{Komentoja}
+
+Komemto \texttt{Series[Sin[x],{x,0,3}]} antaa tulostuksen $x-\frac{x^3}{6}+O[x]^4$, eli sinifunktion kolmannen asteen Taylorin polynomin. Kun komento laitetaan \texttt{Normal[]}-komennon sisään, tulostuu $x-\frac{x^3}{6}$ eli jäännöstermi jää pois.
+
+Piin likiarvo kahdenkymmenen merkitsevän numeron tarkkuudella saadaan komennolla \texttt{N[Pi,20]}. Ja sehän on $\pi \approx 3.1415926535897932385$.
+
+\subsection{Funktion nollakohta}
+
+Halutaan laskea funktion $f(x)=x^2+3x-5$ nollakohdat. Määritellään ensin kyseinen funktio koodirivillä \texttt{f[x\_] = x\^{}2 + 3*x - 5} ja tarkaistaan nollakohta komennolla \texttt{Solve[f[x] == 0, x]}. Näin saadaan näppärästi tulokseksi nollakohdat $x=\frac{1}{2}(-3\pm\sqrt{29})$.
+
+\subsection{Kuvaajia}
+
+Piirretään kuvaajat sinifunktiosta ja sen viidennen asteen Taylorin polynomista välillä $[-2\pi,2\pi]$ samaan kuvaan. Se on onnistuu kuvan \ref{fig:sinitaylor} näyttämällä tavalla.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =100mm]{kuva1-sintaylor.eps}
+    \caption{Sinifunktio ja sen viidennen asteen Taylorin polynomi nollassa.}
+    \label{fig:sinitaylor}
+\end{figure}
+
+\clearpage
+
+\section{Tehtävä B: EOQ-malli}
+
+Tutkitaan tuotteen varastointikustannuksia EOQ-mallilla. Mallissa $D$ kuvaa tuotteen kysynytää vuodessa ja $Q$ varastoon yhdessä tilauserässä tilattavien tuotteisen määrää. Lisäksi $C_1$ on varaston täydentämisestä koituva tilauskustannus ja $C_2$ varastointikustannus per varastoitava tuote per vuosi.
+
+\subsection{Kokonaiskustannukset}
+
+Tavoitteena on luonnollisesti minimoida tuotteen varastoinnin vuosittaiset kokonaiskustannukset, jotka voidaan ilmaista kaavalla
+\begin{equation*}
+    C_{total}= C_1 \frac{D}{Q} + C_2 \frac{Q}{2},
+\end{equation*}
+missä $ \frac{D}{Q}$ kuvaa tilausten lukumäärää vuodessa ja $\frac{Q}{2}$ keskimääräistä varastotilannetta (olettaen, että kysyntä on tasaista vuoden mittaan).
+
+\subsection{Optimointi}
+
+Selvitetään sitten, miten kannattaisi valita tilauskoko $Q$ ja tilauskertojen lukumäärä, jotta kokonaiskustannukset jäisivät mahdollisimman pieniksi.
+
+Ratkaistaan siis funktion $C_{total}(Q)$ minimi Mathematican avulla. Määritellään ensin funktio rivillä \texttt{Ctot[q\_] = c1*(d/q) + c2*(q/2);} ja derivoidaan funktio sitten muuttujan $Q$ suhteen komennolla \texttt{D[Ctot[q], q]}. Ratkaistaan derivaattafunktion positiivinen nollakohta ja saadaan
+\begin{align}
+    0 & = C_{total}'(Q) = \frac{C_2}{2}-\frac{C_1 D}{Q^2}\\
+    Q & = \sqrt{\frac{2DC_1}{C_2}},
+\end{align}
+eli optimaalisin tilauserän koko on $Q^*=\sqrt{\frac{2DC_1}{C_2}}$. Tilauskertojen lukumäärä on tällöin $\frac{D}{Q^*}=\sqrt{\frac{DC_2}{2C_1}}$.
+
+Siis optimoidulla tilauskoolla kokonaiskustannusten suuruudeksi saadaan
+\begin{equation}
+    C_{total} = C_1 \frac{D}{Q^*} + C_2 \frac{Q^*}{2} = C_1 \sqrt{\frac{DC_2}{2C_1}} + C_2 \frac{\sqrt{\frac{2DC_1}{C_2}}}{2} = \sqrt{2DC_1C_2}.
+\end{equation}
+
+\clearpage
+
+\section{Tehtävä C: Rosenbrockin banaanilaakso}
+
+Tarkastellaan erästä Rosenbrockin banaanilaksifunktioksikin kutsuttua optimoinnin testauksessa yleisesti käytettyä funktiota
+\begin{equation}
+    f(x,y)=100(y-x^2)^2+(a-x)^2,
+\end{equation}
+missä $a$ on vakio.
+
+Funktion $f$ minimi $f(a,a^2)=0$ löydetään näppärästi Mathematicalla seuraavasti:
+\begin{figure}[!htb]
+    \includegraphics[width =80mm]{kuva2-banaanimin.eps}
+\end{figure}
+
+Kuvassa \ref{fig:banana2} funktion $f$ graafi vakion arvolla $a=1$ minimipisteen $(1,1)$ läheisyydessä.
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =110mm]{kuva3-banaanigraafi.eps}
+    \caption{Banaanilaaksofunktion $f$ graafi vakion arvolla $a=1$.}
+    \label{fig:banana2}
+\end{figure}
+
+\section{Kotitehtävä 1: Mathematican sovelluskohteista}
+
+Katsoin useammankin videon Mathmatican käytöstä erilaisissa projekteissa ja sovelluskohteissa. Yksi videoista käsitteli verenpainetutkimusta, jossa Mathematicaa hyödynnettiin verisuonten elastisuuden mallintamiseen. Tässä ja monessa muussakin videossa puhuja ylisti erityisesti Mathematican visuaalisuutta ja interaktiivisuutta, joiden ansiosta myös vähemmän matemtiikasta ja ohjelmoinnista tietävä ihminen voi hyödyntää sitä.
+
+Myös matemaattistaustaiset ihmiset kertoivat käyttävänsä Mathematicaa ahkerasti. Eräs utkija kertoi pitävänsä erityisesti siitä, että Mathematica yhdistää olio-ohjelmointia ja algoritmipohjaista ohjelmointia, mikä tekee siitä helppokäyttöisen ja nopean työkalun testaamaan ideoiden toimivuutta. Toinen puolestaan hehkutti, kuinka sillä pystyy hallitsemaan niin isoja kokonaisuuksia kuin yksittäisiä pikkuhommiakin, molempia yhtä näppärästi.
+
+Itse voin tämä kurssin ulkopuolella löytää varmasti monia paikkoja, jossa Mathematicasta voisi olla hyvötyä. Esimerkiksi lähes päivittäisen Wolfram\-Alphan käytön voisi korvata vaikka kokonaan, jahka oppii Mathematican käytön kunnolla. Myös kaikkia hupijuttuja voisi varmasti keksiä inspiroituneena videosta, jossa MHacksin voittajat esittelivät luomustaan.
+
+\section{Kotitehtävä 2: Kokonaisdifferentiaalin laskeminen}
+
+Fysikaalinen suure $F$, joka ei ole suoraan mitattavissa, voidaan määrittää mittaamalla siihen vaikuttavien suureiden $x_1,x_2,..,x_n$ arvot ja laskea sille arvo kaavalla $F(x_1,x_2,...,x_n)$. Virherajat saadulle suureen $F$ arvolle saadaan puolestaan kokonaisdifferentiaalista
+\begin{align}
+    \Delta F & = \left\lvert \frac{\partial F}{\partial x_1} \right\rvert \Delta x_1 + \left\lvert \frac{\partial F}{\partial x_2} \right\rvert \Delta x_2 + ... + \left\lvert \frac{\partial F}{\partial x_n} \right\rvert \Delta x_n\\
+    & = \lvert \nabla F \rvert \cdot (\Delta x_1, \Delta x_2, ..., \Delta x_n),
+\end{align}
+missä $\Delta x_i$ on mittauksen $x_i$ keskivirhe.
+
+\subsection{Polttovälin virhearvio}
+\label{polttovali}
+
+Linssin polttoväli $f$ saadaan kaavasta $f=\frac{ab}{a+b}$, missä $a$ on esineen etäisyys ja $b$ kuvan etäisyys linssistä. Kuvasta \ref{fig:polttov} löytyy Mathematica-koodi, jolla seuraavat tulokset on laskettu.
+
+Polttovälin virhearvion lausekke on
+\begin{equation}
+    \Delta f = \Delta a \left\lvert \frac{b^2}{(a+b)^2} \right\rvert + \Delta b \left\lvert \frac{a^2}{(a+b)^2} \right\rvert.
+\end{equation}
+
+Olkoon nyt $a=85\pm1$ ja $b=196\pm2$. Tällöin polttoväliksi ja virherajoiksi saadaan
+\begin{equation}
+    f = \frac{ab}{a+b} = \frac{16660}{281} \approx 59.29
+\end{equation}
+sekä
+\begin{equation}
+    [f_{min},f_{max}] = [f-\Delta f, f+\Delta f] = \left[\frac{4628594}{78961}, \frac{4734326}{78961}\right] \approx [58.62, 59.96].
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width =90mm]{kuva4-polttov.eps}
+    \caption{Osion \ref{polttovali} Mathematica-koodi.}
+    \label{fig:polttov}
+\end{figure}
+
+\subsection{Ympyräsektoritontin pinta-ala}
+\label{sektoritontti}
+
+Halutaan mitata ympyräsektorin muotoisen tontin pinta-ala $0.5\,m^2$ tarkkuudella. Kulma pystytään mittaamaan luotettavasti sadasosa-asteen tarkkuudella, joten tehtävänä on selvittää, miten tarkasti säde on pystyttävä mittaamaan, jotta päästään toivottuun pinta-alan tarkkuuteen.
+
+Pinta-ala saadaan lausekkeesta $A(r,\phi)=\frac{\phi}{2\pi}\pi r^2=\frac{1}{2}\phi r^2$, missä $r$ on ympyrän säde ja $\phi$ sektorin keskuskulma.
+
+Muodostetaan kokonaisdifferentiaali eli pinta-alan virhetermin lauseke ja ratkaistaan siitä analyyttinen lauseke virheelle $\Delta r$:
+\begin{align}
+    \Delta A & = \Delta r \lvert\phi r\rvert + \frac{1}{2}\, \Delta \phi\, r^2\\
+    \Delta r & = \frac{2\,\Delta A-\Delta\phi\, r^2}{2\lvert\phi r\rvert}.
+\end{align}
+Sijoitetaan nyt tehtävänannon arvot $\Delta A \leq 0.5\,m^2 = \frac{1}{2}m^2$ ja $\Delta\phi = 0.01\degree = \frac{\pi}{18000}$, jolloin saadaan
+\begin{equation}
+    \Delta r \leq \frac{18000-\pi r^2}{36000 \lvert \phi r \rvert}\,m.
+\end{equation}
+Säteen mittaustarkkuus on riippuu siis itse säteestä, eli absoluuttisten virherajojen laskemiseksi tarvitaan tieto säteen pituudesta.
+
+Tarkastellaan esimerkiksi tilannetta, jossa säde $r\approx 50\,m$ ja kulma $\phi \approx \frac{2\pi}{3}$ sekä pinta-alan ja kulman virheet edelleen $\Delta A \leq \frac{1}{2}\,m^2$ ja $\Delta\phi = \frac{\pi}{18000}$. Nyt voidaan laskea yläraja virheelle $\Delta r$:
+\begin{equation}
+    \Delta r \leq \frac{3}{200\pi}-\frac{1}{480}\,m \approx 0.0027\,m = 2,7\,mm.
+\end{equation}
+Siis $50$ metrin matkalla mittaus ei saa heittää kolmea milliäkään, jos alle puolen neliömetrin pinta-alavirheessä halutaan pysyä.
+
+Yllä olevissa laskuissa käytetty Mathematica-koodi löytyy kuvasta \ref{fig:tontti}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva5-sektoritontti.eps}
+    \caption{Osion \ref{sektoritontti} Mathematica-koodi.}
+    \label{fig:tontti}
+\end{figure}
+
+\end{document}
