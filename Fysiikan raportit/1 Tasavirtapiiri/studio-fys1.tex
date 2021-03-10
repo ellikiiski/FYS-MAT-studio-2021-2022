@@ -1,0 +1,288 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+
+\usepackage{color}
+\definecolor{green2}{rgb}{0,0.4,0}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=MATLAB,
+  aboveskip=3mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  commentstyle=\color{green2},
+  breaklines=false,
+  breakatwhitespace=false,
+  tabsize=3
+}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Fysiikan harjoitus 1: 
+\par
+Tasavirtapiiri}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Esitehtävät}
+
+\subsection{Resistanssi ja resistiivisyys}
+
+\textit{Mitä tarkoitetaan resistanssilla ja resistiivisyydellä?}
+
+Sekä resistanssi eli sähköinen vastus että resistiivisyys eli ominaisvastus kuvaavat kykyä vastustaa sähkövirtaa. Käsitteiden ero on se, että resistanssi on kappaleen (jonkin sähköpiirin osan, esim. johtimen) ominaisuus, siinä missä resistiviisyys on puolestaan aineen ominaisuus.
+
+Resistanssin yksikkö on ohmi ($\Omega$) ja resistiviisyyden ohmimetri ($\Omega m$). Esimerkiksi johtimen resistanssi voidaan siis laskea, mikäli tunnetaan sen mitat ja valmistusaineen resistiivisyys.
+
+\subsection{Kirchhoffin lait}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =60mm]{kuva1-kirchhoff.eps}
+    \caption{Yksinkertainen haaraantuva virtapiiri.}
+    \label{fig:kirchhoff}
+\end{figure}
+
+\textit{Määritä Kirchoffin virta- ja jännitelait kuvan \ref{fig:kirchhoff} esimerkille. Kirjoita Kirchoffin virtalaki
+pisteen $A$ suhteen ja Kirchoffin jännitelaki silmukoille $P_1$ ja $P_2$.}
+
+Kirchhoffin virtalain mukaan jokaisessa virtapiirin pisteessä siihen tulevan ja siitä lähtevän sähkövirran suuruus on sama. Pisteessä $A$ kyseisen lain mukaan
+\begin{equation*}
+    \Sigma I = \bar{I}_1 + \bar{I}_2 + \bar{I}_3 = I_1 - I_2 - I_3 = 0.
+\end{equation*}
+
+Kirchhoffin jännitelaki puolestaan toteaa, että jokaisessa virtapiirin silmukassa potentiaali- eli jännite-erojen summa on nolla. Silmukoille $P_1$ ja $P_2$ pätee siis
+\begin{equation*}
+    \Sigma U_1 = \bar{U}_0 + R \bar{I}_2 = U_0 - R I_2 = 0
+\end{equation*}
+ja
+\begin{equation*}
+    \Sigma U_2 = \bar{U}_0 + 2R \bar{I}_3 = U_0 - 2R I_3 = 0.
+\end{equation*}
+
+\subsection{Resistiivisyyden virhearvio}
+
+Poikkileikkaukseltaan ympyrän muotoisen langan resistanssi voidaan laskea kaavalla
+\begin{equation}
+\label{y1}
+    R = \frac{4\rho}{\pi d^2}L,
+\end{equation}
+missä $\rho$ on resistiivisyys, $d$ langan halkaisija ja $L$ sen pituus.
+
+\textit{Työssä määritetään langan resistiivisyys $\rho$ yhtälön (\ref{y1}) avulla piirtämällä resistanssia $R$ langan
+pituuden $L$ funktiona. Määritä yhtälön (\ref{y1}) riippuvuutta hyödyntäen yhtälö langan resistiivisyyden virhearviolle $\Delta \rho$, jossa esiintyy tämän suoran kulmakerroin ja sen virhearvio.}
+
+Suoran kulmakerroin vastaa yhtälön (\ref{y1}) termiä $\frac{4\rho}{\pi d^2}$, mistä voidaan ratkaista ratkaista restistiivisyys ja sen virhearvio:
+\begin{equation}
+\label{y2}
+    \rho  = \frac{\pi k d^2}{4}, \qquad \Delta \rho  = \left\vert\frac{\partial \rho}{\partial k}\right\vert \Delta k = \frac{\pi d^2}{4} \Delta k.
+\end{equation}
+
+\section{Mittauksia}
+
+\subsection{Tasavirtapiiri - 2 lamppua}
+\label{2lamppua}
+
+Rakennetaan kuvan \ref{fig:kk1} mukainen virtapiiri, jossa lamput $a$ ja $b$ ovat identtiset. Tutkitaan virtamittarin lukemaa ennen ja jälkeen kytkimen $K$ sulkemisen.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =60mm]{kuva2-kk1.eps}
+    \caption{Kohdan \ref{2lamppua} kytkentäkaavio.}
+    \label{fig:kk1}
+\end{figure}
+
+\subsubsection{Hypoteesi}
+
+Uskon virtamittarin lukeman pysyvän samana, kun kytkin $K$ suljetaan ja virta alkaa kulkea myös lampun $a$ läpi. Tällöin sähkövirta nimittäin jakautuu kahteen haaraan, jolloin kummankin lampun läpi kulkee puolet siitä virrasta, joka aiemmin kulki lampun $b$ läpi. Koska lamput ovat identtiset, ne vastustavat sähkövirtaa yhtäläisesti ja kokonaissähkövirta mittarin kohdalla pysyy samana.
+
+\subsubsection{Mittaustulos}
+
+Kun suoritetaan kuvattu koe, huomataan vastoin hypoteesia virran suurinpiirtein kaksinkertaistuvan. Käyhän saatu tulos jäkeenkin, kun sitä pohtii hetken hätäistä hypoteesia hartaammin.
+
+Kytkimen ollessa auki virtapiirissä kulkeva virta on yksinkertaisesti $I_b=\frac{U}{R}$, missä $U$ on pariston jännite ja $R$ lampun $b$ (sekä lampun $a$) resistanssi.
+
+Kun kytkin suljetaan, jännite-ero kummankin lampun yli on edelleen sama Kirchhoffin toisen lain (jännitelaki) mukaan. Tällöin molempien lamppujen läpi kulkee sähkövirta $I_a=I_b=\frac{U}{R}$ ja nyt Kirchhoffin ensimmäisen lain (virtalaki) mukaan mittarin läpi kulkeva sähkövirta on $I=I_a+I_b=2I_b$.
+
+\subsection{Tasavirtapiiri - 3 lamppua}
+\label{3lamppua}
+
+Rakennetaan sitten puolestaan kuvan \ref{fig:kk2} mukainen virtapiiri, jossa kaikki lamput $a$, $b$ ja $c$ ovat keskenään identtiset. Tutkitaan tilannetta, jossa kytkin suljetaan ja lamput syttyvät. Halutaan selvittää palavatko lamput keskenään yhtä kirkkaasti.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =60mm]{kuva3-kk2.eps}
+    \caption{Kohdan \ref{3lamppua} kytkentäkaavio.}
+    \label{fig:kk2}
+\end{figure}
+
+\subsubsection{Hypoteesi}
+
+Mutu-tuntumalla tekisi mieleni heti sanoa lamppujen $b$ ja $c$ syttyvän himmeämpinä kuin $a$, mutta edellisestä virhearviosta viisastuneena tarkastelkaamme tilannetta vähän tarkemmin.
+
+Kirchhoffin toisen lain mukaan molemmissa haaroissa (lampun $a$ haara ja lamppujen $b$ ja $c$ haara) jännite-ero on sama, jolloin niissä kulkevat sähkövirrat ovat $I_a=\frac{U}{R}$ ja $I_{bc}=\frac{U}{2R}=\frac{1}{2}I_a$, missä $U$ ja $R$ ovat jännite ja resistanssi kuten aiemmin. Siis lamppujen $b$ ja $c$ läpi kulkeva sähkövirta on puolet lampun $a$ läpi kulkevasta sähkövirrasta, jolloin ne palavat himmeämmin kuin lamppu $a$.
+
+\subsubsection{Mittaustulos}
+
+Koe suoritettaessa huomataan hypoteesin osuneen oikeaan: lamppu $a$ palaa selvästi kirkkaammin kuin lamput $b$ ja $c$.
+
+\subsection{Vastuslangan resistanssi}
+\label{lanka1}
+
+Tutkitaan kahta samanpituista mutta eripaksuista vastulankaa, jotka ovat molemmat ympyröitä poikkileukkaukseltaan. Langan $A$ halkaisija on $d_A=0,2\,mm$ ja langan $B$ halkaisija $d_B=0,4\,mm$. Halutaan vertailla, miten poikkileikkauspinta-ala vaikuttaa vastuslangan resistanssiin.
+
+\subsubsection{Hypoteesi}
+
+Kun palautetaan mieleen yhtälö (\ref{y1}), huomataan resistanssin olevan kääntäen verrannollinen langan poikkileikkauksen halkaisijan neliöön. Täten halkaisijan kaksinkeraistuessa resistanssin tulisi tippua neljäsosaan.
+
+Hypoteesi olkoon siis, että paksumman langan ($B$) resistanssi on neljäsosa ohuemman langan ($A$) resistanssista.
+
+\subsubsection{Mittaustulos}
+
+Mittauksissa (videolla) saatiin langan $A$ resistanssiksi $R_A \approx 10,7\,\Omega$ ja langalle $B$ puolestaan $R_B \approx 2,8\,\Omega \approx \frac{1}{4} R_A$. Hypoteesin voi täten sanoa osuneen oikeaan.
+
+\section{Vastuslangan resistiivisyyden määrittäminen}
+\label{lanka2}
+
+\subsection{Koejärjestely}
+
+Toteutetaan vielä osion \ref{lanka1} vastuslangalle $B$ sarja mittauksia sen materiaalin resistiivisyyden määrittämiseksi. Rakennetaan kuvan \ref{fig:kk3} mukainen kytkentä ja mitataan jännitehäviö useilla eri langan pituuksilla $L$.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =55mm]{kuva4-kk3.eps}
+    \caption{Vastuslangan resistiivisyyden määrittämisessä käytetty kytkentä.}
+    \label{fig:kk3}
+\end{figure}
+
+\subsection{Mittaustulokset}
+
+Suoritetaan mittaukset vakiojännitteellä $U_0=30\,V$ ja -resstanssilla $R=470\,\Omega$. Saadaan taulukossa \ref{tab:t1} esitetyt tulokset.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        pituus $L$ ($cm$) & jännitehäviö $U$ ($mV$) \\
+        \hline
+        3,0 & 19,3\\
+        9,0 & 63,0\\
+        15,0 & 102,1\\
+        21,0 & 142,1\\
+        27,5 & 188,0\\
+        34,0 & 229,6\\
+        41,0 & 278,8\\
+        \hline
+    \end{tabular}
+    \caption{Mittaustulokset: vastuslangan jännitehäviö sen eri pituuksilla.}
+    \label{tab:t1}
+\end{table}
+
+Resistiivisyyden laskemiseksi tarvitaan ensiksi tieto vastuslangan resistanssista kullakin pituudella. Resistanssi $R_L$ saadaan yhtälöparista
+\begin{equation*}
+    \begin{cases}
+    0= 30\,V - (470\,\Omega + R_L)I\\
+    U = R_LI
+    \end{cases}
+    \Rightarrow \quad R_L = \frac{470\,\Omega \cdot U}{30\,V - U},
+\end{equation*}
+missä $I$ on sähkövirta ja $U$ on mitattu jännitehäviö.
+
+\subsection{Visualisointi ja lopputulos}
+
+Lasketaan MATLABilla (koodi löytyy tarivttassa liitteestä \ref{koodi}) resistanssit sekä piirretään koordinaatistoon jännitehäviön avulla laskettu resistanssi langan pituuden funktiona ja sovitetaan siihen vielä suora (kuva \ref{fig:kuvaaja}). Kulmakertoimeksi saadaan $k=(0,10737\pm 0,0005954)\frac{\Omega}{m}$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva5-kuvaaja.eps}
+    \caption{Mittaustulokset ja niihin sovitettu suora.}
+    \label{fig:kuvaaja}
+\end{figure}
+
+Esitehtävän yhtälöistä (\ref{y2}) ensimmäisen avulla saadaan resistiivisyydeksi
+\begin{equation*}
+    \rho  = \frac{\pi k d^2}{4} \approx \frac{\pi}{4} \cdot 0,10737\,\frac{\Omega}{m} \cdot (0,4 \cdot 10^{-3}\,m)^2 \approx 1,35 \cdot 10^{-8}\,\Omega m.
+\end{equation*}
+
+Resistiivisyyden virhearvio puolestaan saadaan samaan tapaan, kuin esitehtävän jälkimmäisessä yhtälössä (\ref{y2}), ottaen kuitenkin tällä kertaa huomioon myös poikkileikkauksen halkaisijan virhe $\Delta d = 0,005\,mm$. Kulmakertoimen virhe on yllä saatu $\Delta k=0,0005954\,\frac{\Omega}{m}$. Resistiivisyyden virheeksi saadaan
+\begin{align*}
+    \Delta \rho & = \left\vert\frac{\partial \rho}{\partial d}\right\vert \Delta d + \left\vert\frac{\partial \rho}{\partial k}\right\vert \Delta k = \frac{\pi k d}{2} \Delta d + \frac{\pi d^2}{4} \Delta k\\
+    & \approx \frac{\pi}{2} \cdot 0,10737\,\frac{\Omega}{m} \cdot 0,4 \cdot 10^{-3}\,m \cdot 0,005\cdot 10^{-3}\,m\\
+    & \quad\,\, + \frac{\pi}{4} \cdot (0,4 \cdot 10^{-3}\,m)^2 \cdot 0,0005954\,\frac{\Omega}{m}\\
+    & \approx 4,12 \cdot 10^{-10}\,\Omega m.
+\end{align*}
+
+Resistiviisyyden pitäisi mittausten mukaan kuulua välille $[1,31\,\Omega m, 1,39\,\Omega m]$. Tulos on kyllä oikeaa suuruusluokkaa, muttei erityisen lähellä minkään yleisen materiaalin resistiivisyyttä. Lähimpänä lienee kupari, jonka resistiivisyys huoneenlämmössä on $1,678 \cdot 10^{-8}\,\Omega m$.
+
+On vielä huomioitava, että yleismittarin virhe oletettiin laskelmissa nollaksi, mikä osaltaan hieman vääristää tulosta. Käyttöohjeen mukaan mittarin virhe on koejärjestelymme suurusluokassa sähkövirran osalta noin $1,2\%$, tasavirran jännitteelle suunnilleen $0,8\%$ ja resistanssin kohdalla prosentin luokkaa.
+
+\clearpage
+
+\section{Liitteet}
+
+\subsection{MATLAB-koodi}
+\label{koodi}
+
+Osion \ref{lanka2} laskelmissa käytetty MATLAB-koodi.
+
+\begin{lstlisting}
+% alustetaan data
+dataL = [3,9,15,21,27.5,34,41]';
+dataU = [19.3,63,102.1,142.1,188,229.6,278.8]';
+% LASKETAAN RESISTANSSIT
+% muutetaan millivoltit volteiksi
+v = (0.001).*dataU;
+% sijoitetaan jannitehaviot kaavaan
+dataR = 470*v./(30-v);
+
+% luodaan lineaarinen malli
+% - tulosteesta voidaan lukea kulmakerroin ja sen virhearvio
+model = fitlm(dataL,dataR, 'linear')
+
+% plotataan samaan kuvaan data ja lineaarinen malli valilla [0,50]
+figure
+hold on
+t = [0:50]';
+plot(t, predict(model, t))
+plot(dataL, dataR, 'x')
+title('Vastuslangan resistanssi pituuden funktiona')
+xlabel('langan pituus (cm)')
+ylabel('resistanssi (\Omega)')
+legend('sovitettu suora', 'mittaustulokset',
+    'location', 'southeast')
+grid on
+axis tight
+\end{lstlisting}
+
+\end{document}
