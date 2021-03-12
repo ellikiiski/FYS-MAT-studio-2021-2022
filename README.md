@@ -2,6 +2,8 @@
 
 Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin töitä keväältä 2021.
 
+### Tietokoneharhoitukset
+
 #### MATLAB
 - [Johdatus matemaattiseen mallintamiseen](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/1%20Johdatus/studio-vk1.pdf)
 - [Ohjelmointi](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/2%20Ohjelmointi/studio-vk2.pdf)
@@ -18,3 +20,9 @@ Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin töitä ke
 #### Excel
 - Tilastollinen analyysi
 #### Harjoitustyö
+
+### Fysiikan harjoitukset
+
+- [Tasavirtapiiri](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/Fysiikan%20raportit/1%20Tasavirtapiiri/studio-fys1.pdf)
+- Vaihtovirtapiiri *(tulossa seuraavaksi)*
+- ...
