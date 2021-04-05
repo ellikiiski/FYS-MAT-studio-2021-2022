@@ -1,0 +1,280 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+
+\usepackage{color}
+\definecolor{green2}{rgb}{0,0.4,0}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=Mathematica,
+  aboveskip=3mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  commentstyle=\color{green2},
+  breaklines=false,
+  breakatwhitespace=false,
+  tabsize=3
+}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Tietokoneharjoitus 6: 
+\par
+Symbolinen laskenta II}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Tehtävä A: Solow'n kasvumalli}
+
+Yksinkertaistetussa Solow'n mallissa kansantalouden kokonaistuotantoa $Y$ voidaan kuvata yhtälöllä
+\begin{equation}
+    Y(k)=A\sqrt{k},
+\end{equation}
+missä $k$ on kertynyt pääoma ja $A$ vakiotermi.
+
+Vuosittain tuotannosta prosenttiosuus $s$ investoidaan ja osuus $p$ kuluu pois, eli tuotannon arvo alenee sen verran. Investointeja ja poistoja kuvaa yhtälöt
+\begin{equation}
+    I(s,k)=sY(k), \qquad D(k)=pk
+\end{equation}
+
+Tässä yksinkertaistetussa mallissa vakiotermi $A$ on kerroin sille, kuinka kovaa vaihtia tuotanto kasvaa. Se kuvanneekin ns. henkistä pääomaa eli mm. työvoimaa ja innovaatioita, jotka fyysisen pääoman lisäksi vaikuttavat tuotannon kasvuun.
+
+\subsection{Investointiosuuden vaikutus}
+
+Tarkastellaan mallin käyttäytymistä eri investointiosuuden $s \in [0.1,1]$ arvoilla, kun $A=1.2$ ja $p=0.03$. Luodaan Mathematicalla kuva, jossa on kuvaajat sekä kokonaistuotannosta $Y(k)$ että investoinneista $I(s,k)$ ja poistoista $D(k)$. Lisätään mukaan liukusäädin, jolla muuttujaa $s$ voi muuttaa halutulla välillä. Se onnistuu seuraavalla koodilla:
+
+\begin{lstlisting}
+y[k_] = a*Sqrt[k];
+i[s_, k_] = s*y[k];
+d[k_] = p*k;
+a = 1.2;
+p = 0.03;
+Manipulate[
+ Plot[
+  {y[k], i[s, k], d[k]}, {k, 0, 1000}, 
+  AxesLabel -> {"paaoma", "tuotanto"}, 
+  PlotLegends -> {"kokonaistuotanto", "investoinnit", "poistot"}
+ ],
+ {s, 0.1, 1}
+]
+\end{lstlisting}
+
+Ratkaistaan seuraavaksi tasapainotila $k^*(s)$, jossa $I(s,k)=D(k)$. Tällöin investoinnit kuluvat arvonalenemisen kompensointiin, eikä uutta pääomaa ei synny. Piirretään samaan kuvaajaan pystyviiva taspainotilan kohdalle.
+
+Rivillä \texttt{ksol[s\_] = Solve[i[s, k] == d[k], \{k\}][[2, 1, 2]];} saadaan ensin tallennettua muuttujaan \texttt{ksol} (nollasta poikkeava) tasapainotila muuttujan $s$ funktiona, jonka jälkeen tarvitsee vain lisätä \texttt{Plot}-komennon sisään kohta \texttt{GridLines $\rightarrow$ \{\{ksol[s]\}, \{\}\}}.
+
+\subsection{Investointiosuuden optimointi}
+
+Käyttövarallisuus on luonnollisesti kokonaistuotannon ja poistojen eli arvonlaskun $Y(k)-D(k)$. Halutaan maksimoida käyttövarallisuus tasapainotilassa $k^*(s)$, mikä saadaan tuloksesta
+\begin{equation}
+    \frac{d}{ds} (Y(k^*(s))-D(k^*(s)) = 0 \quad \Rightarrow \quad s=0.5\,,
+\end{equation}
+joka on ratkaistu seuraavalla Matrhematica-koodilla
+\begin{lstlisting}
+kv[s_] = y[ksol[s]] - d[ksol[s]];
+D[kv[s], s];
+Solve[% == 0, s];
+smax = %[[2, 1, 2]]
+\end{lstlisting}
+
+Kuvassa \ref{fig:solow} luikusäätimellä on valittu $s=0.5$. Silmämääräisestikin kokonaistuotannon ja poistojen erotus näyttää olevan suurimmillaan viivan osoittamassa kohdassa. Siis kun $50\%$ kokonaistuotannosta sijoitetaan investointeihin, käyttövarallisuus taspainotilassa, johon mallin mukaan tuotanto asettuu ajan myötä, on maksimaalinen. Mahdollisuuksien mukaan kannattaa siis pyrkiä investoimaan puolet tuotannosta.
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva1-solowkuvaaja.eps}
+    \caption{Solow'n malli käyttävarallisuuden tasapainotilanteessa maksimoivalla arvolla $s=0.5$.}
+    \label{fig:solow}
+\end{figure}
+
+
+\section{Tehtävä B: Munuaisen kaliumpitoisuus}
+
+Munuaisen kaliumpitoisuutta ajanhetkellä $t$ kuvaa funktio $k(t)$. Aluksi munuaisen kaliumpitoisuus on $0.0025\,\frac{mg}{cm^3}$, kunnes se asetetaan altaaseen, jossa on paljon nestettä, jonka kaliumpitoisuus on $0.0040\,\frac{mg}{cm^3}$. Tunnin kuluttua sen kaliumpitoisuudeksi mitataan $0.0027\,\frac{mg}{cm^3}$.
+
+\subsection{Differentiaaliyhtälö}
+
+Tiedetään, että kaliumpitoisuudet pyrkivät tasaantumaan muniaisen ja altaan veden välillä, jolloin munuaisen kaliumpitoisuuden muutosnopeus on suoraan verrannollinen kaliumpitoisuuksien arotukseen. Saadaan differentiaaliyhtäkö
+\begin{equation}
+    k'(t) = c(p(t)-k(t)),
+\end{equation}
+missä $p(t)=$ on altaan kaliumpitoisuus, joka oletetaan vakioksi. Astia oletetaan nimittäin sen verran suureksi, ettei sen sisältämän nesteen kaliumpitoisuus merkittävästi muutu prosessin aikana.
+
+Ratkaistaan funktion $k$ lauseke seuraavalla Mathematica-koodilla:
+\begin{lstlisting}
+p[t_] = 0.004 - k[t] + 0.0025;
+DSolve[{k'[t] == c*p[t] - c*k[t], k[0] == 0.0025}, k[t], t];
+rat[c_] = %[[1, 1, 2]];
+Solve[{rat[c] == 0.0027 /. {t -> 1}}, c];
+cee = %[[1, 1, 2]];
+k[t_] = rat[cee]
+\end{lstlisting}
+
+Lausekkeeksi saadaan $k(t) = 0.004 e^{-0.143101t} (-0.375 + e^{0.143101t})$.
+
+\subsection{Kalsiumpitoisuuden kehytis}
+\label{paska}
+
+Halutaan selvittää, milloin munuaisen kaliumpitoisuus saavuttaa arvon $0.0035$ $\frac{mg}{cm^3}$ ja mihin arvoon kaliumpitoisuus lopulta kohoaa. Hommat hoituu helposti parilla komennolla:
+\begin{lstlisting}
+Solve[k[t] == 0.0035, t, Reals]
+Limit[k[t], t -> Infinity]
+\end{lstlisting}
+
+Kaliumpitoisuuden $0.0035\,\frac{mg}{cm^3}$ munuainen saavuttaa ajanhetkellä $t=7,68$. Munuaisen lopullinen kaliumpitoisuus, kuten arvata saattaa, tulee olemaan $0.004\,\frac{mg}{cm^3}$, eli sama kuin altaan nesteen pitoisuus.
+
+\section{Tehtävä C: Peto-saalis-malli}
+
+Peto-saalis-mallilla kuvataa kahden lajin populaatioiden koon vaihteluja differentiaaliyhtälöparilla
+\begin{equation}
+    \begin{cases}
+    x'(t)=ax(t)-bx(t)y(t)\\
+    y'(t)=-py(t)+qx(t)y(t)\,,
+    \end{cases}
+\end{equation}
+missä $x(t)$ kuvaa saalis- ja $y(t)$ petokannan koko ajanhetkellä $t$, ja $a$, $b$, $p$ ja $q$ ovat parametreja.
+
+\subsection{Numeerinen ratkaisu}
+
+Ratkaistaan differentiaaliyhtälöpari numeerisesti parametreilla $a=2$, $b=0.2$, $p=3$ ja $q=0.1$ sekä alkuarvoilla $x(0)=5$ ja $y(0)=2$. Mathemticalla se onnistuu seraavasti ja tuloksena saadaan kuva \ref{fig:petos}.
+
+\begin{lstlisting}
+a = 2;
+b = 0.2;
+p = 3;
+q = 0.1;
+s = NDSolve[
+ {x'[t] == a*x[t] - b*x[t]*y[t], 
+  y'[t] == -p*y[t] + q*x[t]*y[t],
+  x[0] == 5, y[0] == 2},
+ {x[t], y[t]},
+ {t, 0, 10}
+];
+ParametricPlot[{x[t], y[t]} /. s, {t, 0, 10}, 
+ PlotLabel -> "Peto-saalis-malli", AxesLabel -> {"saaliit", "pedot"}]
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width =120mm]{kuva2-petosaalis.eps}
+    \caption{Peto-saalis-malli parametreilla $a=2$, $b=0.2$, $p=3$, $q=0.1$.}
+    \label{fig:petos}
+\end{figure}
+
+\subsection{Tasapainotila}
+
+Lasketaan mallin systeemille tasapainopiste, jossa molemmat populaatioden koot ovat vakiintuneet. Tasapainopiste on tietenkin derivaattojen nollakohdissa eli
+\begin{equation}
+    \begin{cases}
+    x'(t)=ax(t)-bx(t)y(t)=0\\
+    y'(t)=-py(t)+qx(t)y(t)=0
+    \end{cases}
+\end{equation}
+
+Toinen tasapainopiste on luonnollisesti $x(t)=0$ ja $y(t)=0$. Kiinnostavampi tasapainopiste on puolestaan $x(t)=\frac{p}{q}=30$ ja $y(t)=\frac{a}{b}=10$.
+
+Koitin ratkaista tasapainopisteen myös seuraavalla Mathematica-koodilla, mutta tulokseksi saadaan aina vain populaatioiden koot lähtöhetkellä $t=0$. En vieläkään keksi missä vika piilee.
+\begin{lstlisting}
+x[t_] = x[t] /. s;
+y[t_] = y[t] /. s;
+tasap = Solve[{a*x[t] - b*x[t]*y[t] == 0, -p*y[t] + q*x[t]*y[t] == 
+     0}, {t}];
+x[tasap[[1, 1, 2]]]
+y[tasap[[1, 1, 2]]]
+\end{lstlisting}
+
+Kun differentiaaliyhtälöpari ratkaistaan tasapainotilan alkuarvoilla, vaihekuvaajaan piirtyy pelkkä piste. Tämä on täysin loogista, sillä tasapainopisteeseen päästyään populaatioiden koot eivät enää muutu, onhan derivaatta on tällöin nolla ja tilan nimi syystäkin tasapainopiste.
+
+\section{Kotitehtävä: Newsvendor-malli}
+
+Vesa haluaa optimoida vekotinmyyntinsä tuoton. Autetaan Vesaa käyttämällä Newsvendor-mallia, jossa tuotto $\pi$ saadaan tilausmäärän $q$ funktiona 
+\begin{equation}
+    \pi(q) = p \min \{D,Zq\} - cZq\,,
+\end{equation}
+missä $p$ on vekottimen myynti- ja $c$ ostohinta sekä $D$ ja $Z$ ovat tasajakautuneita satunnaismuuttujia: $D\sim$ Tas$[0,300]$ on vekottimen kysyntä ja $Z\sim$ Tas$[0,1]$ osuus, jonka tehdas toimittaa tilatuista vekottimista $q$. Täten termi $p \min \{D,Zq\}$ kuvaa myyntituloja ja puolestaan $cZq$ kuluja.
+
+\subsection{Tuoton odotusarvo}
+
+Halutaan siis maksimoida tuoton odotusarvo $E(\pi(q))$, jonka analyyttinen lauseke saadaan integralista
+\begin{equation}
+    E(\pi(q)) = \int_0^{300} \int_0^1 f_D(d)\,f_Z(z)\,(p \min \{d,zq\} - czq)\,\,dz\,dd\,,
+\end{equation}
+missä $f_D$ ja $f_Z$ ovat tasajakautuneiden satunnaismuuttujien $D$ ja $Z$ tieysfunktioita, eli $f_D(x)=\frac{1}{300-0}=\frac{1}{300}$ ja $f_Z(x)=\frac{1}{1-0}=1$.
+
+Odotusarvon lausekkeeksi saadaan siis
+\begin{align}
+    E(\pi(q)) & = \frac{1}{300} \int_0^{300} \int_0^1 p \min \{d,zq\} - czq\,\,dz\,dd\\
+    & = 
+    \begin{cases}
+    \frac{1}{2}(p-c)q-\frac{1}{1800}\,pq^2\,,\quad\,\, 0 \leq q \leq 300\\
+    150p-1500p\,\frac{1}{q}+\frac{c}{2}\,q\,,\quad q > 300\,.
+    \end{cases}
+\end{align}
+
+Optimaalisen tilausmäärän lauseke saadaan ratkaisemalla odotusarvon derivaatan nollakohta. Saadaan lauseke
+\begin{equation}
+    q*=
+    \begin{cases}
+    100\sqrt{3}\sqrt{\frac{p}{c}}\,, \quad \, \, \, c<\frac{p}{3}\\
+    \frac{450p-450c}{p}\,, \qquad c>\frac{p}{3}
+    \end{cases}
+\end{equation}
+
+Myyntihinnalla $p=120$ ja ostokustannuksella $c=30$ tuoton odotusarvon kuvaaja tilausmäärän $q$ funktiona löytyy kuvasta \ref{fig:newsv}. Odotusarvo saavuttaa maksimin optimaalisella tilausmäärällä $q^*=200\sqrt{3}$.
+
+Tässä vielä ylläolevissa laskemissa käytetty Mathematica-koodi:
+\begin{lstlisting}
+Integrate[1/300*(p*Min[d, z*q] - c*z*q), {z, 0, 1}];
+inte = Integrate[%, {d, 0, 300}];
+e1[q_] = inte[[1, 3, 1]];
+e2[q_] = inte[[1, 2, 1]];
+e[q_] = Piecewise[{{e1[q], q <= 300}, {e2[q], q > 300}}];
+der1[q_] = D[e1[q], q];
+der2[q_] = D[e2[q], q];
+der[q_] = Piecewise[{{der1[q], q <= 300}, {der2[q], q > 300}}];
+qStar[q_] = Solve[der[q] == 0, q, Reals]
+c = 30;
+p = 120;
+qStar[q]
+Plot[e[q], {q, 0, 500}, GridLines -> {{%[[1, 1, 2]]}, {}}, 
+ AxesLabel -> {"tilausmaara", "tuoton odotusarvo"}]
+\end{lstlisting}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =120mm]{kuva3-newsvendorkuvaaja.eps}
+    \caption{Tuoton odotusarvo tilausmäärän funktiona ja sen maksimi $q^*=200\sqrt{3}$, kun $p=120$ ja $c=30$.}
+    \label{fig:newsv}
+\end{figure}
+
+\end{document}
