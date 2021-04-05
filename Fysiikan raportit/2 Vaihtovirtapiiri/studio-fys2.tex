@@ -1,0 +1,242 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[finnish]{babel}
+\usepackage{appendix}
+
+\usepackage{color}
+\definecolor{green2}{rgb}{0,0.4,0}
+\usepackage{listings}
+\lstset{frame=tb,
+  language=MATLAB,
+  aboveskip=3mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  commentstyle=\color{green2},
+  breaklines=false,
+  breakatwhitespace=false,
+  tabsize=3
+}
+
+\begin{document}
+
+{
+\thispagestyle{empty}
+
+{\large
+Aalto Yliopisto
+\par
+SCI-C0200 - Fysiikan ja matematiikan menetelmien studio
+}
+
+\vspace{7cm}
+
+{\huge \bf
+Fysiikan harjoitus 2: 
+\par
+Vaihtovirtapiiri}
+
+\vspace{2cm}
+
+{\Large Elli Kiiski}
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
+\section{Esitehtävät}
+
+\subsection{Resonanssitaajuus}
+
+\textit{Mitä tarkoitetaan vaihtovirtapiirin resonanssitaajuudella?}
+
+Resonanssitaajuus on se vaihtovirtapiirin taajuus, jolla virta ja jännite ovat samassa vaiheessa keskenään. Tällöin myös virran amplitudi on maksimissaan.
+
+\subsection{Oskilloskooppi}
+
+\textit{Miten oskilloskoopilla voidaan tutkia RLC-piirin yli olevaa jännitettä ja siinä kulkevaa virtaa?}
+
+Oskilloskooppi voidaan kytkeä mittaamaan jännitettä suoraan jännityslähteestä tai vastuksen yli. Virta puolestaa saadaan mitatauksi välillisesti jännitehäviöstä vastuksen yli laskemalla Ohmin lain avulla.
+
+\begin{figure}
+    \centering
+    \includegraphics[width =60mm]{kuva1-rlcpiiri.eps}
+    \caption{Mittauksissa käytettävän laitteiston piirikaavio. Jännitemittarina toimii oskilloskooppi.}
+    \label{fig:rlcpiiri}
+\end{figure}
+
+\section{Mittauksia}
+
+\subsection{Jännite ja virta vaihtovirtapiirissä}
+
+Suoritetaan mittauksia oskilloskoopilla kuvan \ref{fig:rlcpiiri} mukaisessa vaihtovirtapiirissä, jossa $R=1\,k\Omega$, $L=68\,mH$ ja $C=0,1\,\mu F$. Tutkitaan vaihtovirtapiirin käyttäytymistä sen resonanssitaajuuden ympäristössä. Erityisesti mitataan virran amplitudia sekä vaihe-eroa taajuuden funktiona.
+
+\subsubsection{Hypoteesi}
+
+Arvelen mittausten tuottavan jotakuinkin seuraavanlaisten kuvaajien mukaisia tuloksia.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width =90mm]{kuva2-kuvaajathyp.eps}
+\end{figure}
+
+Kuvaajien täsmällistä muotoa tärkeämpiä seikkoja ovat ne, että virran amplitudi saavuttaa huippunsa resonanssitaajuudella ja vaihe-ero puolestaan on tällöin nolla.
+
+\subsubsection{Mittaustulokset}
+\label{mittitti}
+
+Mittauksisa havaittiin virran amplitudin kasvavan taajuuden kasvaessa, kunnes se noin $1,9\,kHz$ taajuudella käänytyi laskuun. Vaihe-ero on nollassa juurikin samalla tajuudella. Näiltä osin hypoteesi piti hyvin paikkansa.
+
+Kuitenkaan vaihe-eron kuvaajaa hypoteesiin laatiessa en tullut huomioineeksi, että resonanssitaajuutta alhaalta päin lähestyttäessä vaihe-ero on tietenkin negatiivinen, ja mittausten mukaan se onkin pienillä taajuuksilla lähellä $-90^{\circ}$ ja lähenee nollaa resonanssitaajuutta lähestyttäessä. Vastaavasti taajuuden kasvaessa vaihe-ero lähenee $+90^{\circ}$.
+
+Mitataan vaihe-ero ja jännite vastuksen yli $34$ eri tajuudella, ja muodostetaan Ohmin lain avulla laskemalla taulukon \ref{tab:virrir} data, josta voidaan piirtää kuvan \ref{fig:kuvaajat} kuvaajat. (Tässä käytetty MATLAB-koodi löytyy tarvittaessa liitteestä \ref{koodi}.)
+
+Kun verrataan hypoteesin kuvaajia näihin mittaustuloksista piirrettyihin kuvaajiin, arvelut tosiaankin osuivat jotakuinkin oikeaan, jos huomioidaan, että vaihe-eron kuvaaja hypoteesissa onkin ikäänkuin itseisarvo vaihe-erosta. Tietenkin myös virran amplitudin kuvaaja on siitä vinksallaan, että sen pitäisi pienemmillä taajuuksilla olla matalampi kuin suurilla.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{|r|c|l|}
+    \hline
+    $f$ ($Hz$)  & $I$ ($mA$) & $\Phi$ ($^{\circ}$)\\
+    \hline
+    50 & 0,7 & 87\\
+    100 & 1,4 & -85\\
+    200 & 2,7 & -80\\
+    300 & 4,0 & -75\\
+    400 & 5,3 & -72\\
+    500 & 6,6 & -67\\
+    700 & 9,0 & -57\\
+    800 & 10,3 & -51,5\\
+    900 & 11,3 & -47,8\\
+    1000 & 12,4 & -42\\
+    1100 & 13,3 & -37\\
+    1200 & 14,2 & -31\\
+    1300 & 14,8 & -27,3\\
+    1400 & 15,4 & -21,5\\
+    1500 & 15,9 & -16,5\\
+    1600 & 16,1 & -12,5\\
+    1700 & 16,6 & -7\\
+    \textbf{1847} & \textbf{16,5} & \textbf{0}\\
+    1900 & 16,5 & 2\\
+    2000 & 16,5 & 6\\
+    2200 & 16,3 & 12\\
+    2300 & 15,9 & 16\\
+    2400 & 15,7 & 18\\
+    2600 & 15,1 & 24\\
+    2800 & 14,5 & 29,5\\
+    3000 & 14,0 & 34\\
+    3500 & 12,6 & 42\\
+    4500 & 10,3 & 55\\
+    6000 & 8,0 & 63\\
+    8000 & 6,0 & 70\\
+    10000 & 5,0 & 74\\
+    13000 & 3,9 & 78\\
+    15000 & 3,4 & 80\\
+    20000 & 2,4 & 83\\
+    \hline
+    \end{tabular}
+    \caption{Oskilloskoopilla mitattu vaihe-ero $\Phi$ sekä jännitehäviöstä laskettu sähkövirran amplitudin peak-to-peak arvo $I$ taajuuden $f$ mukaan. Resonanassitajuus on mittausten mukaan $1847\,Hz$ ja virran amplitudin maksimi $16,5\,mA$. Arvioidut virheet ovat jännittellee $\pm 0,1\,V$, vaihe-erolle $\pm 1^{\circ}$ ja resonanssitaajuudelle $\pm 5\,Hz$.}
+    \label{tab:virrir}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width =110mm]{kuva3-kuvaajatmit.eps}
+    \caption{Mittausten tuloksena saadut kuvaajat.}
+    \label{fig:kuvaajat}
+\end{figure}
+
+Teoreettinen resonanssitaajuus olisi kaavan mukaan
+\begin{equation}
+\label{resot}
+    f_0=\frac{1}{2\pi\sqrt{LC}}=\frac{1}{2\pi\sqrt{0,068\,H \cdot 0,0000001\,F}} \approx 1930\,Hz\,,
+\end{equation}
+mikä heittää jonkin verran mitatusta resonanssitaajuuden arvosta $1847$. Ero on itse asiassa suurempi kuin oletettu mittausvirhe $\pm 5\,Hz$, joten jossain kohtaa mittauksia tai laskelmia on täytynyt sattua jokin yllättävämpi virhe.
+
+\subsection{Teho vaihtovirtapiirissä}
+
+Tarkastellaan edelleen kuvan \ref{fig:rlcpiiri} vaihtovirtapiiriä. Mitataan oskilloskoopilla sekä koko virtapiirin jännitteen että vastuksen yli olevan jännitteen tehollisarvot ja vaihe-ero sekä lasketaan niiden avulla näennäis- ja pätöteho. Mitataan myös jännitteiden aikakeskiarvo ja lasketaan sen avulla keskimääräinen teho. Vertaillaan saatuja tehoja.
+
+\subsubsection{Mittaustulokset}
+
+Saadaan seuraavat mittaustulokset:
+\begin{itemize}
+    \item Lähdejännitteen tehollisarvo: $U_0=7,28\,V$
+    \item Jännitteen tehollisarvo vastuksen yli: $U_R=1.89\,V$
+    \item Vaihe-ero: $\Phi = 61^{\circ}$
+    \item Jännitteiden aikakeskiarvo: $U_0 \cdot U_R = 10,0\,V^2$.
+\end{itemize}
+
+Näiden avulla saadaan laskettua
+\begin{itemize}
+    \item Näennäisteho: $P_S=U_0 \cdot \frac{U_R}{R} = 7,28\,V \frac{1.89\,V}{1000\,\Omega} \approx 0,014\,W$
+    \item Pätöteho: $P_P=P_S \cos{\Phi} \approx 0,014\,W \cdot 0,48 \approx 0,0067\,W$
+    \item Keskiteho: $P_K = \frac{U_0 \cdot U_R}{R} \approx \frac{10,0\,V^2}{1000\,\Omega} \approx 0,01\,W$.
+\end{itemize}
+
+Saadut arvot eri tehoille vaikuttavat järkeviltä. Näennäisteho on suurin niin kuin pitääkin ja pätöteho huomattavasti pienempi, kuten voi niinkin suurella vaihe-erolla kuin $61^{\circ}$ odottaa. Kuulostaa myös uskottavalta, että keskimääräinen teho, joka ei ota huomioon vaihe-eroa, on suurempi kuin saatu pätöteho, jossa vaihe-ero on lähempänä $90$ astetta kuin nollaa.
+
+\section{Kysymys sähkökondensaattorista}
+
+\textit{Monissa elektroniikan sovellutuksissa käytetään RLC-piirejä, joissa on mukana säätökondensaattori. Mitä säätökondensaattorin käytöllä voidaan saavuttaa?}
+
+Säätökondensaattorilla voidaan säätää vaihtovirtapiirin kapasitanssia. Näin ollen valitsemalla sen avulla sopiva kapasitanssi, voidaan piirin resonanssitaajuus asettaa halutuksi yhtälön (\ref{resot}) avulla.
+
+\clearpage
+
+\section{Liitteet}
+
+\subsection{MATLAB-koodi}
+\label{koodi}
+
+Osion \ref{mittitti} laskelmissa käytetty MATLAB-koodi:
+\begin{lstlisting}
+% Alustetaan alkuarvot
+R = 1000;
+L = 0.068;
+C = 0.0000001;
+% Alustetaan mittaustulokset
+F = xlsread('vaihtovirtapiiri.xlsx', 'A2:A35');
+U = xlsread('vaihtovirtapiiri.xlsx', 'B2:B35');
+Fii = xlsread('vaihtovirtapiiri.xlsx', 'C2:C35');
+% Lasketaan virran amplitudi Ohmin lailla
+I = U/R;
+% Virta milliampeereina
+I*1000
+
+% RESONASSITAAJUUS
+% mitattu
+zeroFii = F(find(Fii(:)==0))
+% laskennallinen
+F0 = 1/(2*pi*sqrt(L*C))
+
+% Plotataan virran amplitudi ja vaihe-ero taajuuden funktiona
+% omiin kuvaajiinsa allekkain ja merkitaan mitattu resonanssitaajuus
+figure
+subplot(2,1,1)
+plot(F,I);
+xline(zeroFii);
+title('Sahkovirran amplitudi taajuuden funktiona')
+xlabel('f (Hz)')
+ylabel('I (A)')
+subplot(2,1,2)
+plot(F,Fii);
+xline(zeroFii);
+title('Vaihe-ero taajuuden funktiona')
+xlabel('f (Hz)')
+ylabel('\Phi (aste)')
+\end{lstlisting}
+
+\end{document}
