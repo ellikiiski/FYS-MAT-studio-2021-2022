@@ -1,6 +1,6 @@
 ## Fysiikan ja matematiikan menetelmien studio
 
-Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin tietokoneharjoituksia keväiltä 2021 ja 2022 (ekalla kerralla kun tuli dropattua viime metriellä).
+Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin tietokoneharjoituksia keväiltä 2021 ja 2022 (ekalla kerralla kun tuli droppauduttua viime metriellä).
 
 #### MATLAB
 - [Johdatus matemaattiseen mallintamiseen](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/1%20Johdatus/studio-vk1.pdf)
