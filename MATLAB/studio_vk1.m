@@ -1,5 +1,7 @@
 clear all;
 
+%% Kotitehtava
+
 % tallennetaan excel-taulukkojen data ja maaritetaan aikavali
 ibm = flipud(xlsread('ibm.xlsx', 'F2:F162'));
 msoft = flipud(xlsread('msft.xlsx', 'F2:F162'));
