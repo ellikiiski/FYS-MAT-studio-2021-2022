@@ -15,6 +15,6 @@ Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin tietokoneh
 - [Symbolinen laskenta I](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/5%20Symbolinen%20laskenta%20I/studio-vk5.pdf) (2021)
 - [Symbolinen laskenta II](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/6%20Symbolinen%20laskenta%20II/studio-vk6.pdf) (2021)
 #### Excel
-- Tilastollinen analyysi *(tulossa emyöhemmin)*
+- Tilastollinen analyysi *(tulossa myöhemmin)*
 #### Harjoitustyö
 *(tulossa myöhemmin)*
