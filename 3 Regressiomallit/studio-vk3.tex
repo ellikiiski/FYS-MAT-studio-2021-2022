@@ -120,7 +120,7 @@ Esimerkiksi varallisuustason 65 energiankulutus osuu $64\%$ luottamusvvälin per
 
 \section{Tehtävä B: Epälineaarinen kasvumalli}
 
-Tiedetään, että jyvien painon $w$ keshitystä ajan $t$ suhteen voidaan mallintaa yhtälöllä
+Tiedetään, että jyvien painon $w$ kehitystä ajan $t$ suhteen voidaan mallintaa yhtälöllä
 \begin{equation}
     w = f(t, w_{max}, t_{max}, t_v) = w_{max}(1+\frac{t_{max}-t}{t_{max}-t_v})(\frac{t}{t_{max}})^{\frac{t_{max}}{t_{max}-t_v}}
 \end{equation}
@@ -247,7 +247,7 @@ joiden avulla arvioille saadaan $64\%$ luottamusväli $[b_i - \Delta b_1, b_i + 
 
 \subsection{Painotetun neliösumman minimointi}
 
-Luodaan ensin MATLABilla funktio, joka ottaa parametreikseen taajuus-,\\ jännite- ja virherajavektorit. Funktio palauttaa ensimmäisenä arvonaan vektorin $b = (b_0, b_1)$, joka sisältää arviot termeille $b_0$ ja $b_1$, jotka ovat siis sovitettavan suoran $V = b_0 + b_1f$ vakiotermi ja kulmakerroin. Toisena arvona palautetaan matriisina ala- ja ylärajat termien $b_0$ ja $b_1$ virheille.\footnote{Aiemmassa versiossa, jossa funktio tuotti vääriä tuloksia oli tapahtunut klassinen morttivirhe: funktion parametreina nykyisten \texttt{xdata} ja \texttt{ydata} tilalla oli \texttt{x} ja \texttt{y}, jolloin niiden arvoja muutettiin myöhemmillä riveillä, vaikka tarkoitus oli luoda uudet muuttujat.}
+Luodaan ensin MATLABilla funktio, joka ottaa parametreikseen taajuus-,\\ jännite- ja virherajavektorit. Funktio palauttaa ensimmäisenä arvonaan vektorin $b = (b_0, b_1)$, joka sisältää arviot termeille $b_0$ ja $b_1$, jotka ovat siis sovitettavan suoran $V = b_0 + b_1f$ vakiotermi ja kulmakerroin. Toisena arvona palautetaan matriisina ala- ja ylärajat termien $b_0$ ja $b_1$ virheille.
 
 \begin{lstlisting}
 function [b, bci] = sovittaja(xdata, ydata, dy)
