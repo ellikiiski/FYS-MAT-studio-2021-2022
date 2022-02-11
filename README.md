@@ -5,7 +5,7 @@ Aalto-yliopiston fysiikan ja matematiikan menetelmien studio -kurssin tietokoneh
 #### MATLAB
 - [Johdatus matemaattiseen mallintamiseen](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/1%20Johdatus/studio-vk1.pdf)
 - [Ohjelmointi](https://github.com/ellikiiski/FYS-MAT-studio/blob/main/2%20Ohjelmointi/studio-vk2.pdf)
-- [Regressiomallit](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/3%20Regressiomallit/studio-vk3.pdf) *(2021)*
+- [Regressiomallit](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/3%20Regressiomallit/studio-vk3.pdf)
 - [Differentiaaliyhtälöt](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/4%20Differentiaaliyhtalot/studio-vk4.pdf) *(2021)*
 - Dynaamisten systeemien säätö (Simulink) *(tulossa pian)*
 - [Monte Carlo -simulointi](https://github.com/ellikiiski/FYS-MAT-studio-2021/blob/main/8%20Monte%20Carlo/studio-vk8.pdf) *(2021)*
